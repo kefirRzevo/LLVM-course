@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "GUIAPI.h"
+#include "GUILib.h"
 
 #define FRAME_TICKS 50
 

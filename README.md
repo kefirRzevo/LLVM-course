@@ -17,3 +17,10 @@ To run program:
 ```
     ./build/gui-app/MyGUI
 ```
+
+## LLVM-IR
+To generate LLVM-IR do this:
+```
+cd gui-app/llvm-ir
+clang-18 -std=c23 -emit-llvm -S ../src/Application.c ../src/Start.c -I ../include
+```

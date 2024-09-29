@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdbool.h>
+
 #define GUI_WIDTH 512
 #define GUI_HEIGHT 512
 
@@ -20,6 +22,9 @@ extern void gui_set_pixel(int x, int y, int color);
 
 // This function returns random integer.
 extern int gui_rand();
+
+// This function is provided by user and it is executed in main loop.
+extern void app(int argc, const char* argv[]);
 
 // Here are some predefined colors.
 #define GUI_BLACK 0x000000FF

@@ -1,4 +1,4 @@
-#include "GUIAPI.h"
+#include "GUILib.h"
 
 void set_bound_cond(bool layer[GUI_WIDTH]) {
   for (int k = 0; k != GUI_WIDTH; ++k) {
@@ -26,7 +26,7 @@ void apply_rule(bool prev[GUI_WIDTH], bool next[GUI_WIDTH]) {
   }
 }
 
-void app() {
+void app(int, const char* []) {
   bool data[GUI_HEIGHT][GUI_WIDTH] = {};
   set_bound_cond(data[0]);
   int cur = 0;
@@ -45,10 +45,4 @@ void app() {
     gui_flush();
     cur++;
   }
-}
-
-auto main(int, const char *[]) -> int {
-  gui_init();
-  app();
-  gui_exit();
 }
