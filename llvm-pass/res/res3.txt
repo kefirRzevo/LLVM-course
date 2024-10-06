@@ -1,0 +1,56 @@
+('sext', 'getelementptr', 'load'): 175618
+('load', 'sext', 'getelementptr'): 175601
+('store', 'br', 'load'): 88504
+('load', 'icmp', 'br'): 88416
+('br', 'load', 'add'): 88333
+('add', 'store', 'br'): 88326
+('br', 'br', 'load'): 88072
+('trunc', 'br', 'load'): 88066
+('load', 'trunc', 'br'): 88047
+('icmp', 'br', 'load'): 87877
+('load', 'add', 'store'): 87790
+('br', 'load', 'load'): 87731
+('br', 'load', 'icmp'): 87707
+('getelementptr', 'load', 'trunc'): 87567
+('load', 'call app->gui_set_pixel', 'br'): 87552
+('load', 'load', 'call app->gui_set_pixel'): 87552
+('br', 'load', 'sext'): 87040
+('getelementptr', 'load', 'sext'): 87040
+('call app->gui_set_pixel', 'br', 'br'): 87040
+('load', 'load', 'sext'): 523
+('add', 'srem', 'sext'): 353
+('sext', 'getelementptr', 'store'): 350
+('getelementptr', 'store', 'br'): 349
+('icmp', 'br', 'store'): 348
+('store', 'br', 'br'): 325
+('srem', 'sext', 'getelementptr'): 325
+('shl', 'and', 'icmp'): 180
+('store', 'load', 'load'): 179
+('sub', 'add', 'srem'): 179
+('br', 'load', 'shl'): 178
+('and', 'icmp', 'br'): 178
+('load', 'load', 'sub'): 178
+('call set_bound_cond->gui_rand', 'srem', 'store'): 171
+('icmp', 'br', 'call set_bound_cond->gui_rand'): 171
+('srem', 'store', 'load'): 171
+('icmp', 'br', 'br'): 171
+('br', 'store', 'br'): 171
+('br', 'call set_bound_cond->gui_rand', 'srem'): 170
+('store', 'load', 'icmp'): 170
+('load', 'add', 'srem'): 169
+('load', 'load', 'add'): 168
+('br', 'store', 'load'): 155
+('load', 'sub', 'add'): 155
+('load', 'shl', 'and'): 154
+('alloca', 'alloca', 'alloca'): 4
+('store', 'store', 'call app->llvm.memset.p0.i64'): 1
+('getelementptr', 'getelementptr', 'call app->set_bound_cond'): 1
+('store', 'store', 'br'): 1
+('br', 'ret', 'store'): 1
+('call app->gui_quit_event', 'br', 'load'): 1
+('getelementptr', 'load', 'add'): 1
+('getelementptr', 'call app->apply_rule', 'alloca'): 1
+('store', 'store', 'store'): 1
+('ret', 'store', 'br'): 1
+('icmp', 'br', 'call app->gui_flush'): 1
+('ret',): 1

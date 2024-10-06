@@ -1,0 +1,21 @@
+('load',): 1847046
+('br',): 1320711
+('getelementptr',): 526854
+('sext',): 526850
+('store',): 267018
+('add',): 265474
+('icmp',): 265219
+('trunc',): 263680
+('call app->gui_set_pixel',): 262144
+('srem',): 1538
+('call set_bound_cond->gui_rand',): 512
+('sub',): 512
+('shl',): 512
+('and',): 512
+('alloca',): 13
+('ret',): 3
+('call app->llvm.memset.p0.i64',): 1
+('call app->set_bound_cond',): 1
+('call app->gui_quit_event',): 1
+('call app->apply_rule',): 1
+('call app->gui_flush',): 1

@@ -18,9 +18,13 @@ To run program:
     ./build/gui-app/MyGUI
 ```
 
-## LLVM-IR
+## LLVM-Pass
 To generate LLVM-IR do this:
 ```
-cd gui-app/llvm-ir
-clang-18 -std=c23 -emit-llvm -S ../src/Application.c ../src/Start.c -I ../include
+clang-18 -std=c23 -fpass-plugin=./build/llvm-pass/MyPass.so gui-app/src/OneCycleApplication.c gui-app/src/Start.c gui-app/lib/GUILib.c llvm-pass/src/Log.c -lSDL2 -I ./gui-app/include/
 ```
+After that you can check the statistics of instructions:
+```
+python3 llvm-pass/src/StatGetter.py --groupCount 1
+```
+The results can be seen in directory `llvm-pass/res/`

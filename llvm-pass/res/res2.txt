@@ -1,0 +1,36 @@
+('br', 'load'): 528131
+('sext', 'getelementptr'): 263680
+('load', 'sext'): 263168
+('getelementptr', 'load'): 262656
+('store', 'br'): 132865
+('icmp', 'br'): 132610
+('load', 'icmp'): 132609
+('add', 'store'): 132353
+('load', 'add'): 132097
+('load', 'trunc'): 132096
+('load', 'load'): 132096
+('br', 'br'): 131840
+('trunc', 'br'): 131584
+('call app->gui_set_pixel', 'br'): 131072
+('load', 'call app->gui_set_pixel'): 131072
+('add', 'srem'): 1024
+('br', 'call set_bound_cond->gui_rand'): 512
+('srem', 'store'): 512
+('getelementptr', 'store'): 512
+('store', 'load'): 512
+('load', 'sub'): 512
+('shl', 'and'): 512
+('br', 'store'): 256
+('alloca', 'alloca'): 5
+('store', 'store'): 2
+('alloca', 'store'): 2
+('srem', 'sext'): 2
+('getelementptr', 'getelementptr'): 2
+('call app->llvm.memset.p0.i64', 'getelementptr'): 1
+('getelementptr', 'call app->set_bound_cond'): 1
+('br', 'ret'): 1
+('store', 'call app->gui_quit_event'): 1
+('call app->apply_rule', 'alloca'): 1
+('ret', 'store'): 1
+('call app->gui_flush', 'load'): 1
+('ret',): 1

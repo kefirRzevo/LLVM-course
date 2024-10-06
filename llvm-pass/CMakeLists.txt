@@ -1,4 +1,3 @@
-
 find_package(LLVM REQUIRED CONFIG)
 
 if("${LLVM_VERSION_MAJOR}" VERSION_LESS 18)
@@ -14,8 +13,9 @@ message(STATUS "LLVM STATUS:
   Targets     ${LLVM_TARGETS_TO_BUILD}"
 )
 
-set(LLVM_Pass_Sources src/DumpPass.cc)
-add_library(LLVM_Pass SHARED ${LLVM_Pass_Sources})
-target_compile_definitions(LLVM_Pass PRIVATE ${LLVM_DEFINITIONS})
-target_include_directories(LLVM_Pass PRIVATE ${LLVM_INCLUDE_DIRS})
-#target_link_libraries(LLVM_Pass ${LLVM_LIBRARY_DIRS})
+include(AddLLVM)
+
+add_definitions(${LLVM_DEFINITIONS})
+include_directories(${LLVM_INCLUDE_DIRS})
+link_directories(${LLVM_LIBRARY_DIRS})
+add_llvm_pass_plugin(MyPass src/MyPass.cc)
