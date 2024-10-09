@@ -12,9 +12,6 @@ struct MyModPass : public PassInfoMixin<MyModPass> {
 
   PreservedAnalyses run(Module &M, ModuleAnalysisManager &AM) {
     outs() << M.getName() << "\n";
-    if (M.getName() != "gui-app/src/OneCycleApplication.c")
-      return PreservedAnalyses::none();
-
     bool changed = false;
     for (auto &F : M) {
       changed = true;
@@ -73,17 +70,21 @@ struct MyModPass : public PassInfoMixin<MyModPass> {
   };
 };
 
-PassPluginLibraryInfo getPassPluginInfo() {
-  const auto callback = [](PassBuilder &PB) {
-    PB.registerPipelineStartEPCallback([&](ModulePassManager &MPM, OptimizationLevel) {
-      MPM.addPass(MyModPass{});
-      return true;
-    });
+extern "C" ::llvm::PassPluginLibraryInfo LLVM_ATTRIBUTE_WEAK
+llvmGetPassPluginInfo() {
+  return {
+    LLVM_PLUGIN_API_VERSION, "MyPass", "v0.1",
+    [](PassBuilder &PB) {
+      PB.registerPipelineParsingCallback(
+        [](StringRef Name, ModulePassManager &MPM,
+        ArrayRef<PassBuilder::PipelineElement>) {
+          if(Name == "my-pass"){
+            MPM.addPass(MyModPass{});
+            return true;
+          }
+          return false;
+        }
+      );
+    }
   };
-
-  return {LLVM_PLUGIN_API_VERSION, "MyPlugin", "0.0.1", callback};
-};
-
-extern "C" LLVM_ATTRIBUTE_WEAK PassPluginLibraryInfo llvmGetPassPluginInfo() {
-  return getPassPluginInfo();
 }

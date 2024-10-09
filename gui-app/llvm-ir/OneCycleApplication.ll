@@ -1,5 +1,5 @@
-; ModuleID = 'src/Application.c'
-source_filename = "src/Application.c"
+; ModuleID = 'gui-app/src/OneCycleApplication.c'
+source_filename = "gui-app/src/OneCycleApplication.c"
 target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
 target triple = "x86_64-pc-linux-gnu"
 
@@ -86,87 +86,73 @@ define dso_local void @app(i32 noundef %0, ptr nocapture noundef readnone %1) lo
 
 12:                                               ; preds = %4
   %13 = tail call zeroext i1 @gui_quit_event() #5
-  br i1 %13, label %68, label %14
+  %14 = getelementptr inbounds [512 x [512 x i8]], ptr %3, i64 0, i64 1
+  br label %15
 
-14:                                               ; preds = %12, %52
-  %15 = phi i32 [ %19, %52 ], [ 0, %12 ]
-  %16 = and i32 %15, 511
-  %17 = zext nneg i32 %16 to i64
-  %18 = getelementptr inbounds [512 x [512 x i8]], ptr %3, i64 0, i64 %17
-  %19 = add nuw nsw i32 %15, 1
-  %20 = and i32 %19, 511
-  %21 = zext nneg i32 %20 to i64
-  %22 = getelementptr inbounds [512 x [512 x i8]], ptr %3, i64 0, i64 %21
-  br label %23
+15:                                               ; preds = %15, %12
+  %16 = phi i64 [ 0, %12 ], [ %28, %15 ]
+  %17 = add nuw nsw i64 %16, 511
+  %18 = and i64 %17, 511
+  %19 = getelementptr inbounds i8, ptr %3, i64 %18
+  %20 = load i8, ptr %19, align 1, !tbaa !7, !range !11, !noundef !12
+  %21 = icmp eq i8 %20, 0
+  %22 = select i1 %21, i32 0, i32 4
+  %23 = getelementptr inbounds i8, ptr %3, i64 %16
+  %24 = load i8, ptr %23, align 1, !tbaa !7, !range !11, !noundef !12
+  %25 = icmp eq i8 %24, 0
+  %26 = or disjoint i32 %22, 2
+  %27 = select i1 %25, i32 %22, i32 %26
+  %28 = add nuw nsw i64 %16, 1
+  %29 = and i64 %28, 511
+  %30 = getelementptr inbounds i8, ptr %3, i64 %29
+  %31 = load i8, ptr %30, align 1, !tbaa !7, !range !11, !noundef !12
+  %32 = zext nneg i8 %31 to i32
+  %33 = or disjoint i32 %27, %32
+  %34 = shl nuw nsw i32 1, %33
+  %35 = and i32 %34, 110
+  %36 = icmp ne i32 %35, 0
+  %37 = zext i1 %36 to i8
+  %38 = getelementptr inbounds i8, ptr %14, i64 %16
+  store i8 %37, ptr %38, align 1
+  %39 = icmp eq i64 %28, 512
+  br i1 %39, label %40, label %15, !llvm.loop !15
 
-23:                                               ; preds = %23, %14
-  %24 = phi i64 [ 0, %14 ], [ %36, %23 ]
-  %25 = add nuw nsw i64 %24, 511
-  %26 = and i64 %25, 511
-  %27 = getelementptr inbounds i8, ptr %18, i64 %26
-  %28 = load i8, ptr %27, align 1, !tbaa !7, !range !11, !noundef !12
-  %29 = icmp eq i8 %28, 0
-  %30 = select i1 %29, i32 0, i32 4
-  %31 = getelementptr inbounds i8, ptr %18, i64 %24
-  %32 = load i8, ptr %31, align 1, !tbaa !7, !range !11, !noundef !12
-  %33 = icmp eq i8 %32, 0
-  %34 = or disjoint i32 %30, 2
-  %35 = select i1 %33, i32 %30, i32 %34
-  %36 = add nuw nsw i64 %24, 1
-  %37 = and i64 %36, 511
-  %38 = getelementptr inbounds i8, ptr %18, i64 %37
-  %39 = load i8, ptr %38, align 1, !tbaa !7, !range !11, !noundef !12
-  %40 = zext nneg i8 %39 to i32
-  %41 = or disjoint i32 %35, %40
-  %42 = shl nuw nsw i32 1, %41
-  %43 = and i32 %42, 110
-  %44 = icmp ne i32 %43, 0
-  %45 = zext i1 %44 to i8
-  %46 = getelementptr inbounds i8, ptr %22, i64 %24
-  store i8 %45, ptr %46, align 1
-  %47 = icmp eq i64 %36, 512
-  br i1 %47, label %48, label %23, !llvm.loop !15
+40:                                               ; preds = %15, %45
+  %41 = phi i64 [ %46, %45 ], [ 0, %15 ]
+  %42 = trunc i64 %41 to i32
+  %43 = trunc i64 %41 to i32
+  br label %48
 
-48:                                               ; preds = %23, %54
-  %49 = phi i64 [ %55, %54 ], [ 0, %23 ]
-  %50 = trunc i64 %49 to i32
-  %51 = trunc i64 %49 to i32
-  br label %57
-
-52:                                               ; preds = %54
+44:                                               ; preds = %45
   tail call void @gui_flush() #5
-  %53 = tail call zeroext i1 @gui_quit_event() #5
-  br i1 %53, label %68, label %14
-
-54:                                               ; preds = %65
-  %55 = add nuw nsw i64 %49, 1
-  %56 = icmp eq i64 %55, 512
-  br i1 %56, label %52, label %48, !llvm.loop !16
-
-57:                                               ; preds = %48, %65
-  %58 = phi i64 [ 0, %48 ], [ %66, %65 ]
-  %59 = getelementptr inbounds [512 x [512 x i8]], ptr %3, i64 0, i64 %49, i64 %58
-  %60 = load i8, ptr %59, align 1, !tbaa !7, !range !11, !noundef !12
-  %61 = icmp eq i8 %60, 0
-  %62 = trunc i64 %58 to i32
-  br i1 %61, label %64, label %63
-
-63:                                               ; preds = %57
-  tail call void @gui_set_pixel(i32 noundef %62, i32 noundef %50, i32 noundef 255) #5
-  br label %65
-
-64:                                               ; preds = %57
-  tail call void @gui_set_pixel(i32 noundef %62, i32 noundef %51, i32 noundef -1) #5
-  br label %65
-
-65:                                               ; preds = %63, %64
-  %66 = add nuw nsw i64 %58, 1
-  %67 = icmp eq i64 %66, 512
-  br i1 %67, label %54, label %57, !llvm.loop !17
-
-68:                                               ; preds = %52, %12
   call void @llvm.lifetime.end.p0(i64 262144, ptr nonnull %3) #5
   ret void
+
+45:                                               ; preds = %56
+  %46 = add nuw nsw i64 %41, 1
+  %47 = icmp eq i64 %46, 512
+  br i1 %47, label %44, label %40, !llvm.loop !16
+
+48:                                               ; preds = %40, %56
+  %49 = phi i64 [ 0, %40 ], [ %57, %56 ]
+  %50 = getelementptr inbounds [512 x [512 x i8]], ptr %3, i64 0, i64 %41, i64 %49
+  %51 = load i8, ptr %50, align 1, !tbaa !7, !range !11, !noundef !12
+  %52 = icmp eq i8 %51, 0
+  %53 = trunc i64 %49 to i32
+  br i1 %52, label %55, label %54
+
+54:                                               ; preds = %48
+  tail call void @gui_set_pixel(i32 noundef %53, i32 noundef %42, i32 noundef 255) #5
+  br label %56
+
+55:                                               ; preds = %48
+  tail call void @gui_set_pixel(i32 noundef %53, i32 noundef %43, i32 noundef -1) #5
+  br label %56
+
+56:                                               ; preds = %54, %55
+  %57 = add nuw nsw i64 %49, 1
+  %58 = icmp eq i64 %57, 512
+  br i1 %58, label %45, label %48, !llvm.loop !17
 }
 
 ; Function Attrs: mustprogress nocallback nofree nounwind willreturn memory(argmem: write)
@@ -203,6 +189,6 @@ attributes #5 = { nounwind }
 !12 = !{}
 !13 = distinct !{!13, !6, !14}
 !14 = !{!"llvm.loop.isvectorized", i32 1}
-!15 = distinct !{!15, !6, !14}
+!15 = distinct !{!15, !6}
 !16 = distinct !{!16, !6}
 !17 = distinct !{!17, !6}

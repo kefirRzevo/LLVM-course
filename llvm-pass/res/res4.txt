@@ -1,0 +1,40 @@
+('icmp', 'trunc', 'br', 'call app->gui_set_pixel'): 131072
+('br', 'add', 'icmp', 'br'): 131072
+('getelementptr', 'load', 'icmp', 'trunc'): 131072
+('br', 'call app->gui_set_pixel', 'br', 'add'): 131072
+('icmp', 'br', 'getelementptr', 'load'): 130816
+('call app->gui_rand', 'trunc', 'and', 'getelementptr'): 512
+('store', 'add', 'icmp', 'br'): 512
+('add', 'and', 'getelementptr', 'load'): 256
+('trunc', 'br', 'getelementptr', 'load'): 256
+('icmp', 'br', 'add', 'icmp'): 256
+('br', 'trunc', 'trunc', 'br'): 256
+('add', 'icmp', 'br', 'trunc'): 255
+('and', 'getelementptr', 'load', 'icmp'): 128
+('select', 'getelementptr', 'load', 'icmp'): 128
+('or', 'select', 'add', 'and'): 128
+('getelementptr', 'load', 'zext', 'or'): 128
+('shl', 'and', 'icmp', 'zext'): 128
+('getelementptr', 'store', 'icmp', 'br'): 128
+('icmp', 'select', 'getelementptr', 'load'): 128
+('icmp', 'or', 'select', 'add'): 128
+('and', 'getelementptr', 'load', 'zext'): 128
+('or', 'shl', 'and', 'icmp'): 128
+('zext', 'getelementptr', 'store', 'icmp'): 128
+('br', 'add', 'and', 'getelementptr'): 128
+('load', 'icmp', 'select', 'getelementptr'): 128
+('load', 'icmp', 'or', 'select'): 128
+('zext', 'or', 'shl', 'and'): 128
+('icmp', 'zext', 'getelementptr', 'store'): 128
+('icmp', 'br', 'add', 'and'): 128
+('getelementptr', 'load', 'icmp', 'select'): 128
+('getelementptr', 'load', 'icmp', 'or'): 128
+('select', 'add', 'and', 'getelementptr'): 128
+('load', 'zext', 'or', 'shl'): 128
+('and', 'icmp', 'zext', 'getelementptr'): 128
+('store', 'icmp', 'br', 'add'): 127
+('alloca', 'call app->llvm.lifetime.start.p0', 'call app->llvm.memset.p0.i64', 'br'): 1
+('call app->gui_quit_event', 'getelementptr', 'br', 'add'): 1
+('store', 'icmp', 'br', 'trunc'): 1
+('add', 'icmp', 'br', 'call app->gui_flush'): 1
+('call app->llvm.lifetime.end.p0', 'ret', ''): 1
