@@ -6,6 +6,11 @@
 #define GUI_HEIGHT 512
 
 // This function is used to initialize gui console.
+  
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern void gui_init();
 
 // This function is used to clear resources after an application is closed.
@@ -24,7 +29,11 @@ extern void gui_set_pixel(int x, int y, int color);
 extern int gui_rand();
 
 // This function is provided by user and it is executed in main loop.
-extern void app(int argc, const char* argv[]);
+extern void app();
+
+#ifdef __cplusplus
+}
+#endif
 
 // Here are some predefined colors.
 #define GUI_BLACK 0x000000FF

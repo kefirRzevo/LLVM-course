@@ -1,5 +1,5 @@
-; ModuleID = 'gui-app/llvm-ir/OneCycleApplication.ll'
-source_filename = "gui-app/src/OneCycleApplication.c"
+; ModuleID = '/home/timur/timur/mygithub/LLVM-course/gui-app/llvm-ir/OneCycleApplication.ll'
+source_filename = "/home/timur/timur/mygithub/LLVM-course/gui-app/src/OneCycleApplication.c"
 target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
 target triple = "x86_64-pc-linux-gnu"
 
@@ -212,153 +212,153 @@ define dso_local void @apply_rule(ptr nocapture noundef readonly %0, ptr nocaptu
 }
 
 ; Function Attrs: nounwind uwtable
-define dso_local void @app(i32 noundef %0, ptr nocapture noundef readnone %1) local_unnamed_addr #0 {
+define dso_local void @app() local_unnamed_addr #0 {
   call void @optLogger(ptr @38)
-  %3 = alloca [512 x [512 x i8]], align 16
+  %1 = alloca [512 x [512 x i8]], align 16
   call void @callOptLogger(ptr @40, ptr @39)
-  call void @llvm.lifetime.start.p0(i64 262144, ptr nonnull %3) #5
+  call void @llvm.lifetime.start.p0(i64 262144, ptr nonnull %1) #5
   call void @callOptLogger(ptr @42, ptr @41)
-  call void @llvm.memset.p0.i64(ptr noundef nonnull align 16 dereferenceable(262144) %3, i8 0, i64 262144, i1 false)
+  call void @llvm.memset.p0.i64(ptr noundef nonnull align 16 dereferenceable(262144) %1, i8 0, i64 262144, i1 false)
   call void @optLogger(ptr @43)
-  br label %4
+  br label %2
 
-4:                                                ; preds = %4, %2
-  %5 = phi i64 [ 0, %2 ], [ %10, %4 ]
+2:                                                ; preds = %2, %0
+  %3 = phi i64 [ 0, %0 ], [ %8, %2 ]
   call void @callOptLogger(ptr @45, ptr @44)
-  %6 = tail call i32 @gui_rand() #5
+  %4 = tail call i32 @gui_rand() #5
   call void @optLogger(ptr @46)
-  %7 = trunc i32 %6 to i8
+  %5 = trunc i32 %4 to i8
   call void @optLogger(ptr @47)
-  %8 = and i8 %7, 1
+  %6 = and i8 %5, 1
   call void @optLogger(ptr @48)
-  %9 = getelementptr inbounds i8, ptr %3, i64 %5
+  %7 = getelementptr inbounds i8, ptr %1, i64 %3
   call void @optLogger(ptr @49)
-  store i8 %8, ptr %9, align 1
+  store i8 %6, ptr %7, align 1
   call void @optLogger(ptr @50)
-  %10 = add nuw nsw i64 %5, 1
+  %8 = add nuw nsw i64 %3, 1
   call void @optLogger(ptr @51)
-  %11 = icmp eq i64 %10, 512
+  %9 = icmp eq i64 %8, 512
   call void @optLogger(ptr @52)
-  br i1 %11, label %12, label %4, !llvm.loop !5
+  br i1 %9, label %10, label %2, !llvm.loop !5
 
-12:                                               ; preds = %4
+10:                                               ; preds = %2
   call void @callOptLogger(ptr @54, ptr @53)
-  %13 = tail call zeroext i1 @gui_quit_event() #5
+  %11 = tail call zeroext i1 @gui_quit_event() #5
   call void @optLogger(ptr @55)
-  %14 = getelementptr inbounds [512 x [512 x i8]], ptr %3, i64 0, i64 1
+  %12 = getelementptr inbounds [512 x [512 x i8]], ptr %1, i64 0, i64 1
   call void @optLogger(ptr @56)
-  br label %15
+  br label %13
 
-15:                                               ; preds = %15, %12
-  %16 = phi i64 [ 0, %12 ], [ %28, %15 ]
+13:                                               ; preds = %13, %10
+  %14 = phi i64 [ 0, %10 ], [ %26, %13 ]
   call void @optLogger(ptr @57)
-  %17 = add nuw nsw i64 %16, 511
+  %15 = add nuw nsw i64 %14, 511
   call void @optLogger(ptr @58)
-  %18 = and i64 %17, 511
+  %16 = and i64 %15, 511
   call void @optLogger(ptr @59)
-  %19 = getelementptr inbounds i8, ptr %3, i64 %18
+  %17 = getelementptr inbounds i8, ptr %1, i64 %16
   call void @optLogger(ptr @60)
-  %20 = load i8, ptr %19, align 1, !tbaa !7, !range !11, !noundef !12
+  %18 = load i8, ptr %17, align 1, !tbaa !7, !range !11, !noundef !12
   call void @optLogger(ptr @61)
-  %21 = icmp eq i8 %20, 0
+  %19 = icmp eq i8 %18, 0
   call void @optLogger(ptr @62)
-  %22 = select i1 %21, i32 0, i32 4
+  %20 = select i1 %19, i32 0, i32 4
   call void @optLogger(ptr @63)
-  %23 = getelementptr inbounds i8, ptr %3, i64 %16
+  %21 = getelementptr inbounds i8, ptr %1, i64 %14
   call void @optLogger(ptr @64)
-  %24 = load i8, ptr %23, align 1, !tbaa !7, !range !11, !noundef !12
+  %22 = load i8, ptr %21, align 1, !tbaa !7, !range !11, !noundef !12
   call void @optLogger(ptr @65)
-  %25 = icmp eq i8 %24, 0
+  %23 = icmp eq i8 %22, 0
   call void @optLogger(ptr @66)
-  %26 = or disjoint i32 %22, 2
+  %24 = or disjoint i32 %20, 2
   call void @optLogger(ptr @67)
-  %27 = select i1 %25, i32 %22, i32 %26
+  %25 = select i1 %23, i32 %20, i32 %24
   call void @optLogger(ptr @68)
-  %28 = add nuw nsw i64 %16, 1
+  %26 = add nuw nsw i64 %14, 1
   call void @optLogger(ptr @69)
-  %29 = and i64 %28, 511
+  %27 = and i64 %26, 511
   call void @optLogger(ptr @70)
-  %30 = getelementptr inbounds i8, ptr %3, i64 %29
+  %28 = getelementptr inbounds i8, ptr %1, i64 %27
   call void @optLogger(ptr @71)
-  %31 = load i8, ptr %30, align 1, !tbaa !7, !range !11, !noundef !12
+  %29 = load i8, ptr %28, align 1, !tbaa !7, !range !11, !noundef !12
   call void @optLogger(ptr @72)
-  %32 = zext nneg i8 %31 to i32
+  %30 = zext nneg i8 %29 to i32
   call void @optLogger(ptr @73)
-  %33 = or disjoint i32 %27, %32
+  %31 = or disjoint i32 %25, %30
   call void @optLogger(ptr @74)
-  %34 = shl nuw nsw i32 1, %33
+  %32 = shl nuw nsw i32 1, %31
   call void @optLogger(ptr @75)
-  %35 = and i32 %34, 110
+  %33 = and i32 %32, 110
   call void @optLogger(ptr @76)
-  %36 = icmp ne i32 %35, 0
+  %34 = icmp ne i32 %33, 0
   call void @optLogger(ptr @77)
-  %37 = zext i1 %36 to i8
+  %35 = zext i1 %34 to i8
   call void @optLogger(ptr @78)
-  %38 = getelementptr inbounds i8, ptr %14, i64 %16
+  %36 = getelementptr inbounds i8, ptr %12, i64 %14
   call void @optLogger(ptr @79)
-  store i8 %37, ptr %38, align 1
+  store i8 %35, ptr %36, align 1
   call void @optLogger(ptr @80)
-  %39 = icmp eq i64 %28, 512
+  %37 = icmp eq i64 %26, 512
   call void @optLogger(ptr @81)
-  br i1 %39, label %40, label %15, !llvm.loop !15
+  br i1 %37, label %38, label %13, !llvm.loop !15
 
-40:                                               ; preds = %45, %15
-  %41 = phi i64 [ %46, %45 ], [ 0, %15 ]
+38:                                               ; preds = %43, %13
+  %39 = phi i64 [ %44, %43 ], [ 0, %13 ]
   call void @optLogger(ptr @82)
-  %42 = trunc i64 %41 to i32
+  %40 = trunc i64 %39 to i32
   call void @optLogger(ptr @83)
-  %43 = trunc i64 %41 to i32
+  %41 = trunc i64 %39 to i32
   call void @optLogger(ptr @84)
-  br label %48
+  br label %46
 
-44:                                               ; preds = %45
+42:                                               ; preds = %43
   call void @callOptLogger(ptr @86, ptr @85)
   tail call void @gui_flush() #5
   call void @callOptLogger(ptr @88, ptr @87)
-  call void @llvm.lifetime.end.p0(i64 262144, ptr nonnull %3) #5
+  call void @llvm.lifetime.end.p0(i64 262144, ptr nonnull %1) #5
   call void @optLogger(ptr @89)
   ret void
 
-45:                                               ; preds = %56
+43:                                               ; preds = %54
   call void @optLogger(ptr @90)
-  %46 = add nuw nsw i64 %41, 1
+  %44 = add nuw nsw i64 %39, 1
   call void @optLogger(ptr @91)
-  %47 = icmp eq i64 %46, 512
+  %45 = icmp eq i64 %44, 512
   call void @optLogger(ptr @92)
-  br i1 %47, label %44, label %40, !llvm.loop !16
+  br i1 %45, label %42, label %38, !llvm.loop !16
 
-48:                                               ; preds = %56, %40
-  %49 = phi i64 [ 0, %40 ], [ %57, %56 ]
+46:                                               ; preds = %54, %38
+  %47 = phi i64 [ 0, %38 ], [ %55, %54 ]
   call void @optLogger(ptr @93)
-  %50 = getelementptr inbounds [512 x [512 x i8]], ptr %3, i64 0, i64 %41, i64 %49
+  %48 = getelementptr inbounds [512 x [512 x i8]], ptr %1, i64 0, i64 %39, i64 %47
   call void @optLogger(ptr @94)
-  %51 = load i8, ptr %50, align 1, !tbaa !7, !range !11, !noundef !12
+  %49 = load i8, ptr %48, align 1, !tbaa !7, !range !11, !noundef !12
   call void @optLogger(ptr @95)
-  %52 = icmp eq i8 %51, 0
+  %50 = icmp eq i8 %49, 0
   call void @optLogger(ptr @96)
-  %53 = trunc i64 %49 to i32
+  %51 = trunc i64 %47 to i32
   call void @optLogger(ptr @97)
-  br i1 %52, label %55, label %54
+  br i1 %50, label %53, label %52
 
-54:                                               ; preds = %48
+52:                                               ; preds = %46
   call void @callOptLogger(ptr @99, ptr @98)
-  tail call void @gui_set_pixel(i32 noundef %53, i32 noundef %42, i32 noundef 255) #5
+  tail call void @gui_set_pixel(i32 noundef %51, i32 noundef %40, i32 noundef 255) #5
   call void @optLogger(ptr @100)
-  br label %56
+  br label %54
 
-55:                                               ; preds = %48
+53:                                               ; preds = %46
   call void @callOptLogger(ptr @102, ptr @101)
-  tail call void @gui_set_pixel(i32 noundef %53, i32 noundef %43, i32 noundef -1) #5
+  tail call void @gui_set_pixel(i32 noundef %51, i32 noundef %41, i32 noundef -1) #5
   call void @optLogger(ptr @103)
-  br label %56
+  br label %54
 
-56:                                               ; preds = %55, %54
+54:                                               ; preds = %53, %52
   call void @optLogger(ptr @104)
-  %57 = add nuw nsw i64 %49, 1
+  %55 = add nuw nsw i64 %47, 1
   call void @optLogger(ptr @105)
-  %58 = icmp eq i64 %57, 512
+  %56 = icmp eq i64 %55, 512
   call void @optLogger(ptr @106)
-  br i1 %58, label %45, label %48, !llvm.loop !17
+  br i1 %56, label %43, label %46, !llvm.loop !17
 }
 
 ; Function Attrs: nocallback nofree nounwind willreturn memory(argmem: write)

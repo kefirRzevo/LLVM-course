@@ -1,7 +1,7 @@
 #include "GUILib.h"
 
-int main(int argc, const char * argv[]) {
+int main() {
   gui_init();
-  app(argc, argv);
+  app();
   gui_exit();
 }

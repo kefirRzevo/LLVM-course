@@ -26,7 +26,7 @@ void apply_rule(bool prev[GUI_WIDTH], bool next[GUI_WIDTH]) {
   }
 }
 
-void app(int, const char* []) {
+void app() {
   bool data[GUI_HEIGHT][GUI_WIDTH] = {};
   set_bound_cond(data[0]);
   int cur = 0;
