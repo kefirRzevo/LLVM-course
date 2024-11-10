@@ -1,0 +1,47 @@
+('add', 'icmp', 'br'): 87723
+('getelementptr', 'load', 'icmp'): 87722
+('br', 'add', 'icmp'): 87551
+('br', 'getelementptr', 'load'): 87382
+('icmp', 'trunc', 'br'): 87382
+('call app->gui_set_pixel', 'br', 'add'): 87382
+('load', 'icmp', 'trunc'): 87381
+('br', 'call app->gui_set_pixel', 'br'): 87381
+('trunc', 'br', 'call app->gui_set_pixel'): 87381
+('icmp', 'br', 'getelementptr'): 87211
+('and', 'getelementptr', 'load'): 342
+('add', 'and', 'getelementptr'): 341
+('icmp', 'br', 'add'): 341
+('br', 'call app->gui_rand', 'trunc'): 171
+('and', 'getelementptr', 'store'): 171
+('call app->gui_rand', 'trunc', 'and'): 171
+('getelementptr', 'store', 'add'): 171
+('icmp', 'select', 'getelementptr'): 171
+('load', 'icmp', 'or'): 171
+('select', 'add', 'and'): 171
+('getelementptr', 'load', 'zext'): 171
+('or', 'shl', 'and'): 171
+('icmp', 'zext', 'getelementptr'): 171
+('store', 'icmp', 'br'): 171
+('load', 'icmp', 'select'): 171
+('or', 'select', 'add'): 171
+('zext', 'or', 'shl'): 171
+('and', 'icmp', 'zext'): 171
+('getelementptr', 'store', 'icmp'): 171
+('br', 'trunc', 'trunc'): 171
+('trunc', 'trunc', 'br'): 171
+('icmp', 'br', 'call app->gui_rand'): 170
+('trunc', 'and', 'getelementptr'): 170
+('store', 'add', 'icmp'): 170
+('br', 'add', 'and'): 170
+('select', 'getelementptr', 'load'): 170
+('icmp', 'or', 'select'): 170
+('load', 'zext', 'or'): 170
+('shl', 'and', 'icmp'): 170
+('zext', 'getelementptr', 'store'): 170
+('icmp', 'br', 'trunc'): 170
+('trunc', 'br', 'getelementptr'): 170
+('alloca', 'call app->llvm.lifetime.start.p0', 'call app->llvm.memset.p0.i64'): 1
+('icmp', 'br', 'call app->gui_quit_event'): 1
+('getelementptr', 'br', 'add'): 1
+('icmp', 'br', 'call app->gui_flush'): 1
+('call app->llvm.lifetime.end.p0', 'ret', ''): 1

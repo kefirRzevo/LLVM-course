@@ -26,4 +26,4 @@ message(STATUS "LLVM STATUS:
 include(AddLLVM)
 
 add_subdirectory(gui-app)
-
+add_subdirectory(llvm-pass)

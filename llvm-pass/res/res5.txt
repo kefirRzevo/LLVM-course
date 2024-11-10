@@ -1,0 +1,36 @@
+('br', 'getelementptr', 'load', 'icmp', 'trunc'): 52736
+('br', 'call app->gui_set_pixel', 'br', 'add', 'icmp'): 52736
+('trunc', 'br', 'call app->gui_set_pixel', 'br', 'add'): 52736
+('icmp', 'br', 'getelementptr', 'load', 'icmp'): 52633
+('icmp', 'trunc', 'br', 'call app->gui_set_pixel', 'br'): 52224
+('load', 'icmp', 'trunc', 'br', 'call app->gui_set_pixel'): 52224
+('getelementptr', 'load', 'icmp', 'trunc', 'br'): 52224
+('call app->gui_set_pixel', 'br', 'add', 'icmp', 'br'): 52224
+('add', 'icmp', 'br', 'getelementptr', 'load'): 52122
+('br', 'add', 'icmp', 'br', 'getelementptr'): 52122
+('getelementptr', 'load', 'icmp', 'select', 'getelementptr'): 512
+('load', 'icmp', 'or', 'select', 'add'): 512
+('and', 'getelementptr', 'load', 'zext', 'or'): 512
+('shl', 'and', 'icmp', 'zext', 'getelementptr'): 512
+('store', 'icmp', 'br', 'add', 'and'): 511
+('trunc', 'and', 'getelementptr', 'store', 'add'): 103
+('icmp', 'br', 'call app->gui_rand', 'trunc', 'and'): 103
+('getelementptr', 'store', 'add', 'icmp', 'br'): 103
+('br', 'add', 'icmp', 'br', 'trunc'): 103
+('trunc', 'br', 'getelementptr', 'load', 'icmp'): 103
+('icmp', 'br', 'add', 'icmp', 'br'): 103
+('call app->gui_rand', 'trunc', 'and', 'getelementptr', 'store'): 102
+('add', 'icmp', 'br', 'call app->gui_rand', 'trunc'): 102
+('and', 'getelementptr', 'store', 'add', 'icmp'): 102
+('br', 'call app->gui_rand', 'trunc', 'and', 'getelementptr'): 102
+('store', 'add', 'icmp', 'br', 'call app->gui_rand'): 102
+('trunc', 'trunc', 'br', 'getelementptr', 'load'): 102
+('add', 'icmp', 'br', 'add', 'icmp'): 102
+('br', 'trunc', 'trunc', 'br', 'getelementptr'): 102
+('br', 'add', 'icmp', 'br', 'add'): 102
+('icmp', 'br', 'trunc', 'trunc', 'br'): 102
+('add', 'icmp', 'br', 'trunc', 'trunc'): 102
+('alloca', 'call app->llvm.lifetime.start.p0', 'call app->llvm.memset.p0.i64', 'br', 'call app->gui_rand'): 1
+('call app->gui_quit_event', 'getelementptr', 'br', 'add', 'and'): 1
+('store', 'icmp', 'br', 'trunc', 'trunc'): 1
+('call app->gui_flush', 'call app->llvm.lifetime.end.p0', 'ret', ''): 1

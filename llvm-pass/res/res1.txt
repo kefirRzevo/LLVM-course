@@ -1,0 +1,22 @@
+('br',): 788482
+('icmp',): 527360
+('getelementptr',): 264705
+('add',): 264192
+('trunc',): 263680
+('load',): 263680
+('call app->gui_set_pixel',): 262144
+('and',): 2048
+('store',): 1024
+('select',): 1024
+('or',): 1024
+('zext',): 1024
+('call app->gui_rand',): 512
+('shl',): 512
+('alloca',): 1
+('call app->llvm.lifetime.start.p0',): 1
+('call app->llvm.memset.p0.i64',): 1
+('call app->gui_quit_event',): 1
+('call app->gui_flush',): 1
+('call app->llvm.lifetime.end.p0',): 1
+('ret',): 1
+('',): 1
