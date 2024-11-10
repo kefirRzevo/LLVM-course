@@ -1,0 +1,813 @@
+DEF_INSN(exit, { cpu.set_is_exit(true); }, {}, { m_builder.CreateRetVoid(); })
+
+DEF_INSN(
+    addi,
+    {
+      const auto &attrs = insn.get_attrs();
+      cpu.set_reg(attrs.m_rd,
+                  cpu.get_reg(attrs.m_rs1) + cpu.get_reg(attrs.m_rs2));
+    },
+    {
+      is >> arg1 >> arg2 >> arg3;
+      attrs.m_rd = std::stoi(arg1.substr(1));
+      attrs.m_rs1 = std::stoi(arg2.substr(1));
+      attrs.m_rs2 = std::stoi(arg3.substr(1));
+    },
+    {
+      Value *rs1_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                    insn.get_attrs().m_rs1);
+      Value *rs2_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                    insn.get_attrs().m_rs2);
+      Value *rd_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                   insn.get_attrs().m_rd);
+      Value *val1 = m_builder.CreateLoad(m_builder.getInt64Ty(), rs1_ptr);
+      Value *val2 = m_builder.CreateLoad(m_builder.getInt64Ty(), rs2_ptr);
+      Value *val3 = m_builder.CreateAdd(val1, val2);
+      m_builder.CreateStore(val3, rd_ptr);
+    })
+
+DEF_INSN(
+    subi,
+    {
+      const auto &attrs = insn.get_attrs();
+      cpu.set_reg(attrs.m_rd,
+                  cpu.get_reg(attrs.m_rs1) - cpu.get_reg(attrs.m_rs2));
+    },
+    {
+      is >> arg1 >> arg2 >> arg3;
+      attrs.m_rd = std::stoi(arg1.substr(1));
+      attrs.m_rs1 = std::stoi(arg2.substr(1));
+      attrs.m_rs2 = std::stoi(arg3.substr(1));
+    },
+    {
+      Value *rs1_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                    insn.get_attrs().m_rs1);
+      Value *rs2_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                    insn.get_attrs().m_rs2);
+      Value *rd_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                   insn.get_attrs().m_rd);
+      Value *val1 = m_builder.CreateLoad(m_builder.getInt64Ty(), rs1_ptr);
+      Value *val2 = m_builder.CreateLoad(m_builder.getInt64Ty(), rs2_ptr);
+      Value *val3 = m_builder.CreateSub(val1, val2);
+      m_builder.CreateStore(val3, rd_ptr);
+    })
+
+DEF_INSN(
+    muli,
+    {
+      const auto &attrs = insn.get_attrs();
+      cpu.set_reg(attrs.m_rd,
+                  cpu.get_reg(attrs.m_rs1) * cpu.get_reg(attrs.m_rs2));
+    },
+    {
+      is >> arg1 >> arg2 >> arg3;
+      attrs.m_rd = std::stoi(arg1.substr(1));
+      attrs.m_rs1 = std::stoi(arg2.substr(1));
+      attrs.m_rs2 = std::stoi(arg3.substr(1));
+    },
+    {
+      Value *rs1_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                    insn.get_attrs().m_rs1);
+      Value *rs2_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                    insn.get_attrs().m_rs2);
+      Value *rd_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                   insn.get_attrs().m_rd);
+      Value *val1 = m_builder.CreateLoad(m_builder.getInt64Ty(), rs1_ptr);
+      Value *val2 = m_builder.CreateLoad(m_builder.getInt64Ty(), rs2_ptr);
+      Value *val3 = m_builder.CreateMul(val1, val2);
+      m_builder.CreateStore(val3, rd_ptr);
+    })
+
+DEF_INSN(
+    divi,
+    {
+      const auto &attrs = insn.get_attrs();
+      cpu.set_reg(attrs.m_rd,
+                  cpu.get_reg(attrs.m_rs1) / cpu.get_reg(attrs.m_rs2));
+    },
+    {
+      is >> arg1 >> arg2 >> arg3;
+      attrs.m_rd = std::stoi(arg1.substr(1));
+      attrs.m_rs1 = std::stoi(arg2.substr(1));
+      attrs.m_rs2 = std::stoi(arg3.substr(1));
+    },
+    {
+      Value *rs1_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                    insn.get_attrs().m_rs1);
+      Value *rs2_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                    insn.get_attrs().m_rs2);
+      Value *rd_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                   insn.get_attrs().m_rd);
+      Value *val1 = m_builder.CreateLoad(m_builder.getInt64Ty(), rs1_ptr);
+      Value *val2 = m_builder.CreateLoad(m_builder.getInt64Ty(), rs2_ptr);
+      Value *val3 = m_builder.CreateSDiv(val1, val2);
+      m_builder.CreateStore(val3, rd_ptr);
+    })
+
+DEF_INSN(
+    remi,
+    {
+      const auto &attrs = insn.get_attrs();
+      cpu.set_reg(attrs.m_rd,
+                  cpu.get_reg(attrs.m_rs1) % cpu.get_reg(attrs.m_rs2));
+    },
+    {
+      is >> arg1 >> arg2 >> arg3;
+      attrs.m_rd = std::stoi(arg1.substr(1));
+      attrs.m_rs1 = std::stoi(arg2.substr(1));
+      attrs.m_rs2 = std::stoi(arg3.substr(1));
+    },
+    {
+      Value *rs1_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                    insn.get_attrs().m_rs1);
+      Value *rs2_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                    insn.get_attrs().m_rs2);
+      Value *rd_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                   insn.get_attrs().m_rd);
+      Value *val1 = m_builder.CreateLoad(m_builder.getInt64Ty(), rs1_ptr);
+      Value *val2 = m_builder.CreateLoad(m_builder.getInt64Ty(), rs2_ptr);
+      Value *val3 = m_builder.CreateSRem(val1, val2);
+      m_builder.CreateStore(val3, rd_ptr);
+    })
+
+DEF_INSN(
+    andi,
+    {
+      const auto &attrs = insn.get_attrs();
+      cpu.set_reg(attrs.m_rd,
+                  cpu.get_reg(attrs.m_rs1) & cpu.get_reg(attrs.m_rs2));
+    },
+    {
+      is >> arg1 >> arg2 >> arg3;
+      attrs.m_rd = std::stoi(arg1.substr(1));
+      attrs.m_rs1 = std::stoi(arg2.substr(1));
+      attrs.m_rs2 = std::stoi(arg3.substr(1));
+    },
+    {
+      Value *rs1_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                    insn.get_attrs().m_rs1);
+      Value *rs2_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                    insn.get_attrs().m_rs2);
+      Value *rd_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                   insn.get_attrs().m_rd);
+      Value *val1 = m_builder.CreateLoad(m_builder.getInt64Ty(), rs1_ptr);
+      Value *val2 = m_builder.CreateLoad(m_builder.getInt64Ty(), rs2_ptr);
+      Value *val3 = m_builder.CreateAnd(val1, val2);
+      m_builder.CreateStore(val3, rd_ptr);
+    })
+
+DEF_INSN(
+    xori,
+    {
+      const auto &attrs = insn.get_attrs();
+      cpu.set_reg(attrs.m_rd,
+                  cpu.get_reg(attrs.m_rs1) ^ cpu.get_reg(attrs.m_rs2));
+    },
+    {
+      is >> arg1 >> arg2 >> arg3;
+      attrs.m_rd = std::stoi(arg1.substr(1));
+      attrs.m_rs1 = std::stoi(arg2.substr(1));
+      attrs.m_rs2 = std::stoi(arg3.substr(1));
+    },
+    {
+      Value *rs1_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                    insn.get_attrs().m_rs1);
+      Value *rs2_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                    insn.get_attrs().m_rs2);
+      Value *rd_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                   insn.get_attrs().m_rd);
+      Value *val1 = m_builder.CreateLoad(m_builder.getInt64Ty(), rs1_ptr);
+      Value *val2 = m_builder.CreateLoad(m_builder.getInt64Ty(), rs2_ptr);
+      Value *val3 = m_builder.CreateXor(val1, val2);
+      m_builder.CreateStore(val3, rd_ptr);
+    })
+
+DEF_INSN(
+    shli,
+    {
+      const auto &attrs = insn.get_attrs();
+      cpu.set_reg(attrs.m_rd, cpu.get_reg(attrs.m_rs1)
+                                  << cpu.get_reg(attrs.m_rs2));
+    },
+    {
+      is >> arg1 >> arg2 >> arg3;
+      attrs.m_rd = std::stoi(arg1.substr(1));
+      attrs.m_rs1 = std::stoi(arg2.substr(1));
+      attrs.m_rs2 = std::stoi(arg3.substr(1));
+    },
+    {
+      Value *rs1_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                    insn.get_attrs().m_rs1);
+      Value *rs2_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                    insn.get_attrs().m_rs2);
+      Value *rd_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                   insn.get_attrs().m_rd);
+      Value *val1 = m_builder.CreateLoad(m_builder.getInt64Ty(), rs1_ptr);
+      Value *val2 = m_builder.CreateLoad(m_builder.getInt64Ty(), rs2_ptr);
+      Value *val3 = m_builder.CreateShl(val1, val2);
+      m_builder.CreateStore(val3, rd_ptr);
+    })
+
+DEF_INSN(
+    shri,
+    {
+      const auto &attrs = insn.get_attrs();
+      cpu.set_reg(attrs.m_rd, cpu.get_reg(attrs.m_rs1)
+                                  << cpu.get_reg(attrs.m_rs2));
+    },
+    {
+      is >> arg1 >> arg2 >> arg3;
+      attrs.m_rd = std::stoi(arg1.substr(1));
+      attrs.m_rs1 = std::stoi(arg2.substr(1));
+      attrs.m_rs2 = std::stoi(arg3.substr(1));
+    },
+    {
+      Value *rs1_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                    insn.get_attrs().m_rs1);
+      Value *rs2_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                    insn.get_attrs().m_rs2);
+      Value *rd_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                   insn.get_attrs().m_rd);
+      Value *val1 = m_builder.CreateLoad(m_builder.getInt64Ty(), rs1_ptr);
+      Value *val2 = m_builder.CreateLoad(m_builder.getInt64Ty(), rs2_ptr);
+      Value *val3 = m_builder.CreateAShr(val1, val2);
+      m_builder.CreateStore(val3, rd_ptr);
+    })
+
+DEF_INSN(
+    mov,
+    {
+      const auto &attrs = insn.get_attrs();
+      cpu.set_reg(attrs.m_rd, cpu.get_reg(attrs.m_rs1));
+    },
+    {
+      is >> arg1 >> arg2;
+      attrs.m_rd = std::stoi(arg1.substr(1));
+      attrs.m_rs1 = std::stoi(arg2.substr(1));
+    },
+    {
+      Value *rs1_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                    insn.get_attrs().m_rs1);
+      Value *rd_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                   insn.get_attrs().m_rd);
+      Value *val1 = m_builder.CreateLoad(m_builder.getInt64Ty(), rs1_ptr);
+      m_builder.CreateStore(val1, rd_ptr);
+    })
+
+DEF_INSN(
+    mov_imm,
+    {
+      const auto &attrs = insn.get_attrs();
+      cpu.set_reg(attrs.m_rd, attrs.m_imm);
+    },
+    {
+      is >> arg1 >> arg2;
+      attrs.m_rd = std::stoi(arg1.substr(1));
+      attrs.m_imm = std::stoi(arg2);
+    },
+    {
+      Value *rd_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                   insn.get_attrs().m_rd);
+      Value *val1 = m_builder.getInt64(insn.get_attrs().m_imm);
+      m_builder.CreateStore(val1, rd_ptr);
+    })
+
+DEF_INSN(
+    ilt,
+    {
+      const auto &attrs = insn.get_attrs();
+      cpu.set_reg(attrs.m_rd,
+                  cpu.get_reg(attrs.m_rs1) < cpu.get_reg(attrs.m_rs2));
+    },
+    {
+      is >> arg1 >> arg2 >> arg3;
+      attrs.m_rd = std::stoi(arg1.substr(1));
+      attrs.m_rs1 = std::stoi(arg2.substr(1));
+      attrs.m_rs2 = std::stoi(arg3.substr(1));
+    },
+    {
+      Value *rs1_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                    insn.get_attrs().m_rs1);
+      Value *rs2_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                    insn.get_attrs().m_rs2);
+      Value *rd_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                   insn.get_attrs().m_rd);
+      Value *val1 = m_builder.CreateLoad(m_builder.getInt64Ty(), rs1_ptr);
+      Value *val2 = m_builder.CreateLoad(m_builder.getInt64Ty(), rs2_ptr);
+      Value *val3 = m_builder.CreateICmpSLT(val1, val2);
+      Value *val4 = m_builder.CreateZExt(val3, m_builder.getInt64Ty());
+      m_builder.CreateStore(val4, rd_ptr);
+    })
+
+DEF_INSN(
+    imet,
+    {
+      const auto &attrs = insn.get_attrs();
+      cpu.set_reg(attrs.m_rd,
+                  cpu.get_reg(attrs.m_rs1) >= cpu.get_reg(attrs.m_rs2));
+    },
+    {
+      is >> arg1 >> arg2 >> arg3;
+      attrs.m_rd = std::stoi(arg1.substr(1));
+      attrs.m_rs1 = std::stoi(arg2.substr(1));
+      attrs.m_rs2 = std::stoi(arg3.substr(1));
+    },
+    {
+      Value *rs1_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                    insn.get_attrs().m_rs1);
+      Value *rs2_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                    insn.get_attrs().m_rs2);
+      Value *rd_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                   insn.get_attrs().m_rd);
+      Value *val1 = m_builder.CreateLoad(m_builder.getInt64Ty(), rs1_ptr);
+      Value *val2 = m_builder.CreateLoad(m_builder.getInt64Ty(), rs2_ptr);
+      Value *val3 = m_builder.CreateICmpSGE(val1, val2);
+      Value *val4 = m_builder.CreateZExt(val3, m_builder.getInt64Ty());
+      m_builder.CreateStore(val4, rd_ptr);
+    })
+
+DEF_INSN(
+    eq,
+    {
+      const auto &attrs = insn.get_attrs();
+      cpu.set_reg(attrs.m_rd,
+                  cpu.get_reg(attrs.m_rs1) == cpu.get_reg(attrs.m_rs2));
+    },
+    {
+      is >> arg1 >> arg2 >> arg3;
+      attrs.m_rd = std::stoi(arg1.substr(1));
+      attrs.m_rs1 = std::stoi(arg2.substr(1));
+      attrs.m_rs2 = std::stoi(arg3.substr(1));
+    },
+    {
+      Value *rs1_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                    insn.get_attrs().m_rs1);
+      Value *rs2_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                    insn.get_attrs().m_rs2);
+      Value *rd_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                   insn.get_attrs().m_rd);
+      Value *val1 = m_builder.CreateLoad(m_builder.getInt64Ty(), rs1_ptr);
+      Value *val2 = m_builder.CreateLoad(m_builder.getInt64Ty(), rs2_ptr);
+      Value *val3 = m_builder.CreateICmpEQ(val1, val2);
+      Value *val4 = m_builder.CreateZExt(val3, m_builder.getInt64Ty());
+      m_builder.CreateStore(val4, rd_ptr);
+    })
+
+DEF_INSN(
+    neq,
+    {
+      const auto &attrs = insn.get_attrs();
+      cpu.set_reg(attrs.m_rd,
+                  cpu.get_reg(attrs.m_rs1) != cpu.get_reg(attrs.m_rs2));
+    },
+    {
+      is >> arg1 >> arg2 >> arg3;
+      attrs.m_rd = std::stoi(arg1.substr(1));
+      attrs.m_rs1 = std::stoi(arg2.substr(1));
+      attrs.m_rs2 = std::stoi(arg3.substr(1));
+    },
+    {
+      Value *rs1_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                    insn.get_attrs().m_rs1);
+      Value *rs2_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                    insn.get_attrs().m_rs2);
+      Value *rd_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                   insn.get_attrs().m_rd);
+      Value *val1 = m_builder.CreateLoad(m_builder.getInt64Ty(), rs1_ptr);
+      Value *val2 = m_builder.CreateLoad(m_builder.getInt64Ty(), rs2_ptr);
+      Value *val3 = m_builder.CreateICmpNE(val1, val2);
+      Value *val4 = m_builder.CreateZExt(val3, m_builder.getInt64Ty());
+      m_builder.CreateStore(val4, rd_ptr);
+    })
+
+DEF_INSN(
+    select,
+    {
+      const auto &attrs = insn.get_attrs();
+      if (cpu.get_reg(attrs.m_rs1))
+        cpu.set_reg(attrs.m_rd, cpu.get_reg(attrs.m_rs2));
+      else
+        cpu.set_reg(attrs.m_rd, cpu.get_reg(attrs.m_rs3));
+    },
+    {
+      is >> arg1 >> arg2 >> arg3 >> arg4;
+      attrs.m_rd = std::stoi(arg1.substr(1));
+      attrs.m_rs1 = std::stoi(arg2.substr(1));
+      attrs.m_rs2 = std::stoi(arg3.substr(1));
+      attrs.m_rs3 = std::stoi(arg4.substr(1));
+    },
+    {
+      Value *insn_ptr = m_builder.getInt64((uint64_t)&insn);
+      m_builder.CreateCall(
+          m_module->getOrInsertFunction(insn.get_name(), insn_call_type),
+          {cpu_ptr, insn_ptr});
+    })
+
+DEF_INSN(
+    rand,
+    {
+      const auto &attrs = insn.get_attrs();
+      cpu.set_reg(attrs.m_rd, gui_rand());
+    },
+    {
+      is >> arg1;
+      attrs.m_rd = std::stoi(arg1.substr(1));
+    },
+    {
+      Value *insn_ptr = m_builder.getInt64((uint64_t)&insn);
+      m_builder.CreateCall(
+          m_module->getOrInsertFunction(insn.get_name(), insn_call_type),
+          {cpu_ptr, insn_ptr});
+    })
+
+DEF_INSN(
+    cf,
+    {
+      const auto &attrs = insn.get_attrs();
+      cpu.set_reg(attrs.m_rd, (CPU::ptr_type)cpu.create_mem(
+                                  sizeof(bool) * GUI_WIDTH * GUI_HEIGHT));
+    },
+    {
+      is >> arg1;
+      attrs.m_rd = std::stoi(arg1.substr(1));
+    },
+    {
+      Value *insn_ptr = m_builder.getInt64((uint64_t)&insn);
+      m_builder.CreateCall(
+          m_module->getOrInsertFunction(insn.get_name(), insn_call_type),
+          {cpu_ptr, insn_ptr});
+    })
+
+DEF_INSN(
+    df,
+    {
+      const auto &attrs = insn.get_attrs();
+      cpu.delete_mem(cpu.get_reg(attrs.m_rd));
+    },
+    {
+      is >> arg1;
+      attrs.m_rd = std::stoi(arg1.substr(1));
+    },
+    {
+      Value *insn_ptr = m_builder.getInt64((uint64_t)&insn);
+      m_builder.CreateCall(
+          m_module->getOrInsertFunction(insn.get_name(), insn_call_type),
+          {cpu_ptr, insn_ptr});
+    })
+
+DEF_INSN(
+    lea,
+    {
+      const auto &attrs = insn.get_attrs();
+      cpu.set_reg(attrs.m_rd, cpu.get_reg(attrs.m_rs1) +
+                                  attrs.m_imm * cpu.get_reg(attrs.m_rs2));
+    },
+    {
+      is >> arg1 >> arg2 >> arg3 >> arg4;
+      attrs.m_rd = std::stoi(arg1.substr(1));
+      attrs.m_rs1 = std::stoi(arg2.substr(1));
+      attrs.m_rs2 = std::stoi(arg3.substr(1));
+      attrs.m_imm = std::stoi(arg4);
+    },
+    {
+      Value *rs1_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                    insn.get_attrs().m_rs1);
+      Value *rs2_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                    insn.get_attrs().m_rs2);
+      Value *rd_ptr = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                   insn.get_attrs().m_rd);
+      Value *val1 = m_builder.CreateLoad(m_builder.getInt64Ty(), rs1_ptr);
+      Value *val2 = m_builder.CreateLoad(m_builder.getInt64Ty(), rs2_ptr);
+      Value *val3 = m_builder.getInt64(insn.get_attrs().m_imm);
+      Value *val4 = m_builder.CreateMul(val2, val3);
+      Value *val5 = m_builder.CreateAdd(val1, val4);
+      m_builder.CreateStore(val5, rd_ptr);
+    })
+
+DEF_INSN(
+    flush, { gui_flush(); }, {},
+    {
+      Value *insn_ptr = m_builder.getInt64((uint64_t)&insn);
+      m_builder.CreateCall(
+          m_module->getOrInsertFunction(insn.get_name(), insn_call_type),
+          {cpu_ptr, insn_ptr});
+    })
+
+DEF_INSN(
+    has_quit,
+    {
+      const auto &attrs = insn.get_attrs();
+      cpu.set_reg(attrs.m_rd, (Insn::reg_type)gui_quit_event());
+    },
+    {
+      is >> arg1;
+      attrs.m_rd = std::stoi(arg1.substr(1));
+    },
+    {
+      Value *insn_ptr = m_builder.getInt64((uint64_t)&insn);
+      m_builder.CreateCall(
+          m_module->getOrInsertFunction(insn.get_name(), insn_call_type),
+          {cpu_ptr, insn_ptr});
+    })
+
+DEF_INSN(
+    set_pixel,
+    {
+      const auto &attrs = insn.get_attrs();
+      gui_set_pixel((int)cpu.get_reg(attrs.m_rs1),
+                    (int)cpu.get_reg(attrs.m_rs2),
+                    (int)cpu.get_reg(attrs.m_rs3));
+    },
+    {
+      is >> arg1 >> arg2 >> arg3;
+      attrs.m_rs1 = std::stoi(arg1.substr(1));
+      attrs.m_rs2 = std::stoi(arg2.substr(1));
+      attrs.m_rs3 = std::stoi(arg3.substr(1));
+    },
+    {
+      Value *insn_ptr = m_builder.getInt64((uint64_t)&insn);
+      m_builder.CreateCall(
+          m_module->getOrInsertFunction(insn.get_name(), insn_call_type),
+          {cpu_ptr, insn_ptr});
+    })
+
+DEF_INSN(
+    rgb_reg,
+    {
+      const auto &attrs = insn.get_attrs();
+      cpu.set_reg(attrs.m_rd, ((cpu.get_reg(attrs.m_rs1) & 0xFF) << 24) |
+                                  ((cpu.get_reg(attrs.m_rs2) & 0xFF) << 16) |
+                                  ((cpu.get_reg(attrs.m_rs3) & 0xFF) << 8) |
+                                  attrs.m_imm & 0xFF);
+    },
+    {
+      std::string arg5;
+      is >> arg1 >> arg2 >> arg3 >> arg4 >> arg5;
+      attrs.m_rd = std::stoi(arg1.substr(1));
+      attrs.m_rs1 = std::stoi(arg2.substr(1));
+      attrs.m_rs2 = std::stoi(arg3.substr(1));
+      attrs.m_rs3 = std::stoi(arg4.substr(1));
+      attrs.m_imm = std::stoi(arg5);
+    },
+    {
+      Value *insn_ptr = m_builder.getInt64((uint64_t)&insn);
+      m_builder.CreateCall(
+          m_module->getOrInsertFunction(insn.get_name(), insn_call_type),
+          {cpu_ptr, insn_ptr});
+    })
+
+DEF_INSN(
+    lbi,
+    {
+      const auto &attrs = insn.get_attrs();
+      cpu.set_reg(attrs.m_rd, *((uint8_t *)cpu.get_reg(attrs.m_rs1)));
+    },
+    {
+      is >> arg1 >> arg2;
+      attrs.m_rd = std::stoi(arg1.substr(1));
+      attrs.m_rs1 = std::stoi(arg2.substr(1));
+    },
+    {
+      Value *insn_ptr = m_builder.getInt64((uint64_t)&insn);
+      m_builder.CreateCall(
+          m_module->getOrInsertFunction(insn.get_name(), insn_call_type),
+          {cpu_ptr, insn_ptr});
+    })
+
+DEF_INSN(
+    lwi,
+    {
+      const auto &attrs = insn.get_attrs();
+      cpu.set_reg(attrs.m_rd, *((uint32_t *)cpu.get_reg(attrs.m_rs1)));
+    },
+    {
+      is >> arg1 >> arg2;
+      attrs.m_rd = std::stoi(arg1.substr(1));
+      attrs.m_rs1 = std::stoi(arg2.substr(1));
+    },
+    {
+      Value *insn_ptr = m_builder.getInt64((uint64_t)&insn);
+      m_builder.CreateCall(
+          m_module->getOrInsertFunction(insn.get_name(), insn_call_type),
+          {cpu_ptr, insn_ptr});
+    })
+
+DEF_INSN(
+    ldi,
+    {
+      const auto &attrs = insn.get_attrs();
+      cpu.set_reg(attrs.m_rd, *((uint64_t *)cpu.get_reg(attrs.m_rs1)));
+    },
+    {
+      is >> arg1 >> arg2;
+      attrs.m_rd = std::stoi(arg1.substr(1));
+      attrs.m_rs1 = std::stoi(arg2.substr(1));
+    },
+    {
+      Value *insn_ptr = m_builder.getInt64((uint64_t)&insn);
+      m_builder.CreateCall(
+          m_module->getOrInsertFunction(insn.get_name(), insn_call_type),
+          {cpu_ptr, insn_ptr});
+    })
+
+DEF_INSN(
+    sbi,
+    {
+      const auto &attrs = insn.get_attrs();
+      *((uint8_t *)cpu.get_reg(attrs.m_rd)) = (uint8_t)cpu.get_reg(attrs.m_rs1);
+    },
+    {
+      is >> arg1 >> arg2;
+      attrs.m_rd = std::stoi(arg1.substr(1));
+      attrs.m_rs1 = std::stoi(arg2.substr(1));
+    },
+    {
+      Value *insn_ptr = m_builder.getInt64((uint64_t)&insn);
+      m_builder.CreateCall(
+          m_module->getOrInsertFunction(insn.get_name(), insn_call_type),
+          {cpu_ptr, insn_ptr});
+    })
+
+DEF_INSN(
+    swi,
+    {
+      const auto &attrs = insn.get_attrs();
+      *((uint32_t *)cpu.get_reg(attrs.m_rd)) =
+          (uint32_t)cpu.get_reg(attrs.m_rs1);
+    },
+    {
+      is >> arg1 >> arg2;
+      attrs.m_rd = std::stoi(arg1.substr(1));
+      attrs.m_rs1 = std::stoi(arg2.substr(1));
+    },
+    {
+      Value *insn_ptr = m_builder.getInt64((uint64_t)&insn);
+      m_builder.CreateCall(
+          m_module->getOrInsertFunction(insn.get_name(), insn_call_type),
+          {cpu_ptr, insn_ptr});
+    })
+
+DEF_INSN(
+    sdi,
+    {
+      const auto &attrs = insn.get_attrs();
+      *((uint64_t *)cpu.get_reg(attrs.m_rd)) =
+          (uint64_t)cpu.get_reg(attrs.m_rs1);
+    },
+    {
+      is >> arg1 >> arg2;
+      attrs.m_rd = std::stoi(arg1.substr(1));
+      attrs.m_rs1 = std::stoi(arg2.substr(1));
+    },
+    {
+      Value *insn_ptr = m_builder.getInt64((uint64_t)&insn);
+      m_builder.CreateCall(
+          m_module->getOrInsertFunction(insn.get_name(), insn_call_type),
+          {cpu_ptr, insn_ptr});
+    })
+
+DEF_INSN(
+    br,
+    {
+      assert(0 && "Error: insnuction 'br' is not reachable: its implemenated "
+                  "is in LLVM IR generation\n");
+    },
+    {
+      is >> arg1;
+      std::string last_func = last_func_names.back();
+      attrs.m_label1 = last_func + "_" + arg1;
+    },
+    { m_builder.CreateBr(m_bb_map[insn.get_attrs().m_label1]); })
+
+DEF_INSN(
+    brif,
+    {
+      assert(0 && "Error: insnuction 'brif' is not reachable: its implemenated "
+                  "is in LLVM IR generation\n");
+    },
+    {
+      is >> arg1 >> arg2 >> arg3;
+      std::string last_func = last_func_names.back();
+      attrs.m_rs1 = std::stoi(arg1.substr(1));
+      attrs.m_label1 = last_func + "_" + arg2;
+      attrs.m_label2 = last_func + "_" + arg3;
+    },
+    {
+      Value *val1 = m_builder.CreateConstGEP2_64(regfile_type, m_regfile, 0,
+                                                 insn.get_attrs().m_rs1);
+      Value *val2 = m_builder.CreateLoad(m_builder.getInt64Ty(), val1);
+      Value *val3 = m_builder.getInt64(0);
+      Value *val4 = m_builder.CreateICmpEQ(val2, val3);
+      m_builder.CreateCondBr(val4, m_bb_map[insn.get_attrs().m_label2],
+                             m_bb_map[insn.get_attrs().m_label1]);
+    })
+
+DEF_INSN(
+    call, { assert(0 && "Error: insnuction \"call\" is not available yet\n"); },
+    {
+      is >> arg1;
+      attrs.m_label1 = arg1;
+    },
+    {
+      Function *func = m_func_map[insn.get_attrs().m_label1];
+      m_builder.CreateCall(func);
+    })
+
+DEF_INSN(
+    ret, { assert(0 && "Error: insnuction \"ret\" is not available yet\n"); },
+    {}, { m_builder.CreateRetVoid(); })
+
+DEF_INSN(
+    push,
+    {
+      const auto &attrs = insn.get_attrs();
+      cpu.push_reg(cpu.get_reg(attrs.m_rs1));
+    },
+    {
+      is >> arg1;
+      attrs.m_rs1 = std::stoi(arg1.substr(1));
+    },
+    {
+      Value *insn_ptr = m_builder.getInt64((uint64_t)&insn);
+      m_builder.CreateCall(
+          m_module->getOrInsertFunction(insn.get_name(), insn_call_type),
+          {cpu_ptr, insn_ptr});
+    })
+
+DEF_INSN(
+    pop,
+    {
+      const auto &attrs = insn.get_attrs();
+      cpu.set_reg(attrs.m_rd, cpu.pop_reg());
+    },
+    {
+      is >> arg1;
+      attrs.m_rd = std::stoi(arg1.substr(1));
+    },
+    {
+      Value *insn_ptr = m_builder.getInt64((uint64_t)&insn);
+      m_builder.CreateCall(
+          m_module->getOrInsertFunction(insn.get_name(), insn_call_type),
+          {cpu_ptr, insn_ptr});
+    })
+
+DEF_INSN(
+    push_regs,
+    {
+      for (auto i = size_t{}; i != CPU::reg_count; ++i)
+        cpu.push_reg(cpu.get_reg(i));
+    },
+    {},
+    {
+      Value *insn_ptr = m_builder.getInt64((uint64_t)&insn);
+      m_builder.CreateCall(
+          m_module->getOrInsertFunction(insn.get_name(), insn_call_type),
+          {cpu_ptr, insn_ptr});
+    })
+
+DEF_INSN(
+    pop_regs,
+    {
+      for (int i = CPU::reg_count - 1; i >= 0; --i)
+        cpu.set_reg(i, cpu.pop_reg());
+    },
+    {},
+    {
+      Value *insn_ptr = m_builder.getInt64((uint64_t)&insn);
+      m_builder.CreateCall(
+          m_module->getOrInsertFunction(insn.get_name(), insn_call_type),
+          {cpu_ptr, insn_ptr});
+    })
+
+DEF_INSN(
+    dump_regs,
+    {
+      llvm::outs() << cpu.dump_regs();
+      llvm::outs().flush();
+    },
+    {},
+    {
+      Value *insn_ptr = m_builder.getInt64((uint64_t)&insn);
+      m_builder.CreateCall(
+          m_module->getOrInsertFunction(insn.get_name(), insn_call_type),
+          {cpu_ptr, insn_ptr});
+    })
+
+DEF_INSN(
+    dump_mem,
+    {
+      const auto &attrs = insn.get_attrs();
+      llvm::outs() << cpu.dump_mem(cpu.get_reg(attrs.m_rs1), attrs.m_imm);
+      llvm::outs().flush();
+    },
+    {
+      is >> arg1 >> arg2;
+      attrs.m_rs1 = std::stoi(arg1.substr(1));
+      attrs.m_imm = std::stoi(arg2);
+    },
+    {
+      Value *insn_ptr = m_builder.getInt64((uint64_t)&insn);
+      m_builder.CreateCall(
+          m_module->getOrInsertFunction(insn.get_name(), insn_call_type),
+          {cpu_ptr, insn_ptr});
+    })

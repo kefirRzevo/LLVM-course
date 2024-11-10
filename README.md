@@ -45,3 +45,9 @@ To start interpretation LLVM-IR, run this:
 ```
 ./build/ir-gen/IR_Gen
 ```
+
+## LLVM ASM-TO-IR Generation
+To convert asm to LLVM-IR and start interpretation, run this:
+```
+./build/asm-to-ir/AsmToIR_Gen
+```

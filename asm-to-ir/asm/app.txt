@@ -1,0 +1,151 @@
+call app
+exit
+
+
+
+set_bound_cond:
+    pop x16
+    mov_imm x17 0
+    mov_imm x18 0
+    mov_imm x19 1
+    mov_imm x20 2
+    mov_imm x21 512
+    br loop_cond
+.loop_cond: 
+    neq x22 x17 x21
+    brif x22 loop loop_exit
+.loop:
+    rand x22
+    remi x22 x22 x20
+    select x22 x22 x19 x18
+    lea x23 x16 x17 1
+    sbi x23 x22
+    addi x17 x17 x19
+    br loop_cond
+.loop_exit: 
+    ret
+:set_bound_cond
+
+
+
+apply_rule:
+    pop x17
+    pop x16
+    mov_imm x18 0
+    mov_imm x19 1
+    mov_imm x20 2
+    mov_imm x21 4
+    mov_imm x22 110
+    mov_imm x23 512
+    br loop_cond
+.loop_cond:
+    neq x24 x18 x23
+    brif x24 loop loop_exit
+.loop:
+    mov_imm x25 0
+    subi x26 x18 x19
+    addi x26 x26 x23
+    remi x26 x26 x23
+    lea x26 x16 x26 1
+    lbi x26 x26
+    brif x26 prev prev_skip
+.prev:
+    addi x25 x25 x21
+    br prev_skip
+.prev_skip:
+    lea x26 x16 x18 1
+    lbi x26 x26
+    brif x26 cur cur_skip
+.cur:
+    addi x25 x25 x20
+    br cur_skip
+.cur_skip:
+    addi x26 x18 x19
+    addi x26 x26 x23
+    remi x26 x26 x23
+    lea x26 x16 x26 1
+    lbi x26 x26
+    brif x26 next next_skip
+.next:
+    addi x25 x25 x21
+    br next_skip
+.next_skip:
+    shli x26 x19 x25
+    andi x26 x26 x22
+    mov_imm x27 0
+    select x26 x26 x19 x27
+    lea x27 x17 x18 1
+    sbi x27 x26
+    addi x18 x18 x19
+    br loop_cond
+.loop_exit:
+    ret
+:apply_rule
+
+
+
+app:
+    cf x16
+    mov_imm x17 1
+    mov_imm x18 512
+    push_regs
+    push x16
+    call set_bound_cond
+    pop_regs
+    mov_imm x19 0
+    br loop_cond
+.loop_cond:
+    has_quit x20
+    brif x20 loop_exit loop
+.loop:
+    remi x20 x19 x18
+    lea x20 x16 x20 512
+    addi x21 x19 x17
+    remi x21 x21 x18
+    lea x21 x16 x21 512
+    push_regs
+    push x20
+    push x21
+    call apply_rule
+    pop_regs
+    mov_imm x20 0
+    br i_loop_cond
+.i_loop_cond:
+    neq x21 x20 x18
+    brif x21 i_loop i_loop_exit
+.i_loop:
+    mov_imm x22 0
+    br j_loop_cond
+.j_loop_cond:
+    neq x23 x22 x18
+    brif x23 j_loop j_loop_exit
+.j_loop:
+    lea x23 x16 x20 512
+    lea x23 x23 x22 1
+    lbi x23 x23
+    brif x23 exist no_exist
+.exist:
+    mov_imm x23 0
+    rgb_reg x24 x23 x23 x23 255
+    set_pixel x22 x20 x24
+    br j_inc
+.no_exist:
+    mov_imm x23 255
+    rgb_reg x24 x23 x23 x23 255
+    set_pixel x22 x20 x24
+    br j_inc
+.j_inc:
+    flush
+    addi x22 x22 x17
+    br j_loop_cond
+.j_loop_exit:
+    addi x20 x20 x17
+    br i_loop_cond
+.i_loop_exit:
+    flush
+    addi x19 x19 x17
+    br loop_cond
+.loop_exit:
+    df x16
+    ret
+:app
