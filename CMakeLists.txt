@@ -27,3 +27,4 @@ include(AddLLVM)
 
 add_subdirectory(gui-app)
 add_subdirectory(llvm-pass)
+add_subdirectory(ir-gen)

@@ -39,3 +39,9 @@ After that you can check the statistics of instructions:
 python3 llvm-pass/src/StatGetter.py --groupCount 1 > llvm-pass/res/res1.txt
 ```
 The results can be seen in directory `llvm-pass/res/`
+
+## LLVM-IR Generation
+To start interpretation LLVM-IR, run this:
+```
+./build/ir-gen/IR_Gen
+```
