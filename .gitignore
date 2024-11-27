@@ -1,4 +1,5 @@
-build
+build/
 runtime.json
 a.out
-.vscode
+.vscode/
+lang-to-ir/build/
