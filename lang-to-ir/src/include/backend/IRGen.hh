@@ -1,7 +1,9 @@
 #pragma once
 
-#include "visitor/Visitor.hh"
-
 namespace paracl {
-  
-}
+
+class Driver;
+
+void execute(Driver& driver);
+
+} // namespace paracl

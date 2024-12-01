@@ -14,7 +14,7 @@ enum class TypeKind {
   IntType,
   VoidType,
   ArrayType,
-  TupleType,
+  PointerType,
   FunctionType,
 };
 
@@ -25,11 +25,11 @@ class Type {
 
 public:
   Type(size_t size, std::string_view asString, TypeKind kind)
-      : size_(size), asString_(asString) {}
+      : kind_(kind), size_(size), asString_(asString) {}
 
   TypeKind getKind() const { return kind_; }
   size_t getSize() const { return size_; }
-  const std::string& getAsString() const { return asString_; }
+  const std::string &getAsString() const { return asString_; }
 
   virtual ~Type() = default;
 };
@@ -44,87 +44,108 @@ public:
   VoidType() : Type(0, "void", TypeKind::VoidType) {}
 };
 
-class ArrayType final : public Type {
+class ElementedType : public Type {
   Type *elemType_;
+
+public:
+  ElementedType(size_t size, std::string_view asString, TypeKind kind,
+                Type *elemType)
+      : Type(size, asString, kind), elemType_(elemType) {}
+
+  Type *getElemType() const { return elemType_; }
+
+  static bool isElemented(TypeKind kind) {
+    switch (kind) {
+    case TypeKind::ArrayType:
+    case TypeKind::PointerType:
+      return true;
+    default:
+      return false;
+    }
+  }
+};
+
+class ArrayType final : public ElementedType {
   size_t elemCount_;
 
   static std::string getResAsString(Type *elemType, size_t elemCount) {
+    assert(elemType);
     auto res = std::string{elemType->getAsString()};
     return res + "[" + std::to_string(elemCount) + "]";
   }
 
 public:
   ArrayType(Type *elemType, size_t elemCount)
-      : Type(elemType->getSize() * elemCount, getResAsString(elemType, elemCount), TypeKind::ArrayType),
-        elemType_(elemType), elemCount_(elemCount) {}
+      : ElementedType(elemType->getSize() * elemCount,
+                      getResAsString(elemType, elemCount), TypeKind::ArrayType,
+                      elemType),
+        elemCount_(elemCount) {}
 
-  Type *getElemType() const { return elemType_; }
   size_t getElemCount() const { return elemCount_; }
 };
 
-class TupleType final : public Type, std::vector<Type *> {
-public:
-  using Types = std::vector<Type *>;
-  using Types::begin;
-  using Types::end;
-  using Types::size;
-  using Types::empty;
-
-private:
-  static size_t getResSize(const Types &types) {
-    return std::accumulate(types.begin(), types.end(), size_t{},
-                           [](auto &&lhs, auto&& rhs) { return lhs + rhs->getSize(); });
-  }
-
-  static std::string getResAsString(const Types &types) {
-    auto separator = std::string{};
-    auto result = std::string{};
-    std::for_each(types.begin(), types.end(), [&](auto &&type) {
-      result = separator + type->getAsString();
-      separator = ", ";
-    });
-    return result;
+class PointerType final : public ElementedType {
+  static std::string getResAsString(Type *elemType) {
+    assert(elemType);
+    auto res = std::string{elemType->getAsString()};
+    return res + "(*)";
   }
 
 public:
-  TupleType(Types &&types)
-      : Type(getResSize(types), getResAsString(types), TypeKind::TupleType), Types(std::move(types)) {}
+  PointerType(Type *elemType)
+      : ElementedType(sizeof(void *), getResAsString(elemType),
+                      TypeKind::PointerType, elemType) {}
 };
 
-class FunctionType final : public Type {
-  Type *retType_;
-  TupleType *paramTypes_;
+class FunctionType final : public Type, std::vector<Type *> {
+  using Types = std::vector<Type *>;
 
-  static std::string getResAsString(Type *retType, TupleType *paramTypes) {
-    auto res = std::string{retType->getAsString()};
-    return res + "(" + std::string{paramTypes->getAsString()} + ")";
+  Type *retType_;
+
+  static std::string getResAsString(Type *retType, const Types &paramTypes) {
+    assert(retType);
+    auto ret = std::string{retType->getAsString()};
+    return ret + getTypesAsString(paramTypes.begin(), paramTypes.end());
   }
 
 public:
-  FunctionType(Type *retType, TupleType *paramTypes)
-      : Type(sizeof(void *), getResAsString(retType, paramTypes), TypeKind::FunctionType) {
-  }
+  using vector::begin;
+  using vector::empty;
+  using vector::end;
+  using vector::size;
+
+  FunctionType(Type *retType, std::vector<Type *> &&paramTypes)
+      : Type(sizeof(void *), getResAsString(retType, paramTypes),
+             TypeKind::FunctionType),
+        vector(std::move(paramTypes)), retType_(retType) {}
 
   Type *getRetType() const { return retType_; }
-  TupleType *getParamTypes() const { return paramTypes_; }
+
+  template <typename InputIt>
+  static std::string getTypesAsString(InputIt first, InputIt last) {
+    auto separator = std::string{};
+    auto result = std::string{};
+    std::for_each(first, last, [&](auto &&type) {
+      result += separator + type->getAsString();
+      separator = ", ";
+    });
+    return "(" + result + ")";
+  }
 };
 
-class TypeCreator final {
-  using type_uptr = std::unique_ptr<Type>;
-
-  std::unordered_map<std::string, type_uptr> types_;
-
+class TypeCreator final
+    : std::unordered_map<std::string, std::unique_ptr<Type>> {
 public:
   template <typename _Type, typename... _Args> _Type *getType(_Args &&...args) {
     auto type = _Type{std::forward<_Args>(args)...};
     auto string = std::string{type.getAsString()};
-    auto found = types_.find(string);
-    if (found != types_.end()) {
-      return static_cast<_Type*>(found->second.get());
+    auto found = find(string);
+    if (found != end()) {
+      return static_cast<_Type *>(found->second.get());
     }
     auto uptr = std::make_unique<_Type>(std::move(type));
     auto ptr = uptr.get();
-    types_.emplace(string, std::move(uptr));
+    emplace(string, std::move(uptr));
     return ptr;
   }
 };

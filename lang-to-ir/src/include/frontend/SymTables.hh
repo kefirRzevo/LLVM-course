@@ -13,9 +13,9 @@
 namespace paracl {
 
 template <typename Value>
-class SearchTable
+class Scope final
     : std::unordered_map<std::string_view, Value, utils::StringViewHash,
-                                 utils::StringViewEqual> {
+                         utils::StringViewEqual> {
 public:
   using Map = std::unordered_map<std::string_view, Value, utils::StringViewHash,
                                  utils::StringViewEqual>;
@@ -34,30 +34,16 @@ public:
 
   std::optional<Value> lookup(std::string_view name) const {
     auto found = Map::find(name);
-    if (found != end()) {
+    if (found != end())
       return found->second;
-    }
     return std::nullopt;
   }
 };
 
-class Decl;
-
-class Scope final : SearchTable<Decl *> {
+template <typename Value>
+class ScopeStack final: std::vector<std::reference_wrapper<Scope<Value>>> {
 public:
-  using VarsMap = SearchTable<Decl *>;
-  using VarsMap::begin;
-  using VarsMap::declare;
-  using VarsMap::declared;
-  using VarsMap::empty;
-  using VarsMap::end;
-  using VarsMap::lookup;
-  using VarsMap::size;
-};
-
-class ScopeStack final : std::vector<std::reference_wrapper<Scope>> {
-public:
-  using Stack = std::vector<std::reference_wrapper<Scope>>;
+  using Stack = std::vector<std::reference_wrapper<Scope<Value>>>;
   using Stack::begin;
   using Stack::empty;
   using Stack::end;
@@ -65,15 +51,18 @@ public:
   using Stack::rend;
   using Stack::size;
 
-  void beginScope(Scope &scope) { Stack::push_back(scope); }
+  void beginScope(Scope<Value>& scope) { Stack::push_back(scope); }
 
   void endScope() { Stack::pop_back(); }
 
-  void declare(std::string_view name, Decl *decl) {
+  void declare(std::string_view name, Value value) {
     if (!empty()) {
       auto &back = Stack::back();
-      back.get().declare(name, decl);
+      back.get().declare(name, value);
+      return;
     }
+    assert(0);
+    throw std::runtime_error("can not declare as scope is empty");
   }
 
   bool declared(std::string_view name) const {
@@ -82,26 +71,14 @@ public:
     return found != rend();
   }
 
-  std::optional<Decl *> lookup(std::string_view name) const {
+  std::optional<Value> lookup(std::string_view name) const {
     auto found = std::find_if(rbegin(), rend(), [&](auto &&it) {
       return it.get().lookup(name) != std::nullopt;
     });
-    return found->get().lookup(name);
+    if (found != rend())
+      return found->get().lookup(name);
+    return std::nullopt;
   }
 };
-
-// class Function;
-
-// class FunctionTable final : SearchTable<Function *> {
-// public:
-//   using FunctionsMap = SearchTable<Function *>;
-//   using FunctionsMap::begin;
-//   using FunctionsMap::declare;
-//   using FunctionsMap::declared;
-//   using FunctionsMap::empty;
-//   using FunctionsMap::end;
-//   using FunctionsMap::lookup;
-//   using FunctionsMap::size;
-// };
 
 } // namespace paracl

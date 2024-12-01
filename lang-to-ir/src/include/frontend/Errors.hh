@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <memory>
+#include <sstream>
 #include <string>
 #include <string_view>
 #include <utility>
@@ -12,27 +13,26 @@
 namespace paracl {
 
 struct Error {
-  const location &loc_;
-  std::string_view errorType_;
   std::string msg_;
 
-  Error(const location &loc, std::string_view errorType, std::string_view msg)
-      : loc_(loc), errorType_(errorType), msg_(msg) {}
-
-  void print(std::ostream &os) const {
-    os  << "" << errorType_ << ": " << msg_ << std::endl;
+  Error(const location &loc, const std::string &msg) {
+    std::ostringstream oss;
+    oss << loc << " " << msg;
+    msg_ = oss.str();
   }
+
+  void print(std::ostream &os) const { os << msg_ << std::endl; }
 
   virtual ~Error() = default;
 };
 
 struct Lexical : public Error {
-  Lexical(const location &loc, std::string_view msg)
-      : Error(loc, "lexical error", msg) {}
+  Lexical(const location &loc, const std::string &msg)
+      : Error(loc, "lexical error, " + msg) {}
 };
 
 struct UnknownToken final : public Lexical {
-  UnknownToken(const location &loc, std::string_view token)
+  UnknownToken(const location &loc, const std::string &token)
       : Lexical(loc, "unknown type name '" + std::string{token} + "'") {}
 };
 
@@ -42,13 +42,12 @@ struct UnterminatedComment final : public Lexical {
 };
 
 struct Syntax final : public Error {
-  Syntax(const location &loc, std::string_view msg)
-      : Error(loc, "syntax error", msg) {}
+  Syntax(const location &loc, const std::string &msg) : Error(loc, msg) {}
 };
 
 struct Semantic : public Error {
-  Semantic(const location &loc, std::string_view msg)
-      : Error(loc, "semantic error", msg) {}
+  Semantic(const location &loc, const std::string &msg)
+      : Error(loc, "semantic error, " + msg) {}
 };
 
 struct UnassignableExpression final : public Semantic {
@@ -75,15 +74,22 @@ struct MismatchingTypeBinaryExpr final : public Semantic {
 };
 
 struct MismatchingTypeAssignExpr final : public Semantic {
-  MismatchingTypeAssignExpr(const location &loc, const std::string &lhsType,
-                            const std::string &rhsType)
-      : Semantic(loc, "assigning to '" + lhsType +
-                          "' from incompatible type '" + rhsType + "'") {}
+  MismatchingTypeAssignExpr(const location &loc, const std::string &toType,
+                            const std::string &fromType)
+      : Semantic(loc, "assigning to '" + toType + "' from incompatible type '" +
+                          fromType + "'") {}
 };
 
 struct MismatchingType final : public Semantic {
   MismatchingType(const location &loc)
       : Semantic(loc, "can not deduce generic type") {}
+};
+
+struct MismatchingFunctionTypes final : public Semantic {
+  MismatchingFunctionTypes(const location &loc, const std::string &lhsType,
+                           const std::string &rhsType)
+      : Semantic(loc, "mismatching function types '" + lhsType + "' and '" +
+                          rhsType + "'") {}
 };
 
 struct IntTypeRequired final : public Semantic {
@@ -93,14 +99,23 @@ struct IntTypeRequired final : public Semantic {
 
 struct SubscriptedValue final : public Semantic {
   SubscriptedValue(const location &loc)
-      : Semantic(loc, "subscripted value is not an array") {}
+      : Semantic(loc, "subscripted value is not an array or pointer") {}
 };
 
-struct ArrayBounds final : public Semantic {
-  ArrayBounds(const location &loc, int indx, int size)
-      : Semantic(loc, "array index '" + std::to_string(indx) +
-                          "' is past the end of the array of size '" +
-                          std::to_string(size) + "'") {}
+struct Subscript final : public Semantic {
+  Subscript(const location &loc, const std::string &type)
+      : Semantic(loc, "subscript of pointer to type '" + type + "'") {}
+};
+
+struct NotAFunction final : public Semantic {
+  NotAFunction(const location &loc, const std::string &type)
+      : Semantic(loc, "called object type '" + type +
+                          "' is not a function or function pointer") {}
+};
+
+struct FuncDefNotAllowed final : public Semantic {
+  FuncDefNotAllowed(const location &loc)
+      : Semantic(loc, "function definition is not allowed here") {}
 };
 
 struct OutOfLoopStatement final : public Semantic {
@@ -109,9 +124,22 @@ struct OutOfLoopStatement final : public Semantic {
                  "'" + stmt + "' statement not in loop or switch statement") {}
 };
 
+struct OutOfFunctionStatement final : public Semantic {
+  OutOfFunctionStatement(const location &loc)
+      : Semantic(loc,
+                 "'return' statement not in function definition statement") {}
+};
+
 struct Redefinition final : public Semantic {
   Redefinition(const location &loc, const std::string &decl)
       : Semantic(loc, "redefinition of '" + decl + "'") {}
+};
+
+struct IncorrectReturn final : public Semantic {
+  IncorrectReturn(const location &loc, const std::string &retType,
+                  const std::string &type)
+      : Semantic(loc, "cannot initialize return object of type ' " + retType +
+                          "' with a type '" + type + "'") {}
 };
 
 class ErrorReporter final : private std::vector<std::unique_ptr<Error>> {
@@ -131,9 +159,8 @@ public:
   }
 
   void reportAllErrors(std::ostream &os) const {
-    for (auto &&error : *this) {
+    for (auto &&error : *this)
       error->print(os);
-    }
   }
 };
 

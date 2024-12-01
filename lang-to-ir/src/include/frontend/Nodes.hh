@@ -1,22 +1,28 @@
 #pragma once
 
 #include <cassert>
+#include <exception>
 #include <memory>
 #include <string>
 #include <string_view>
 #include <tuple>
 #include <utility>
 #include <vector>
-#include <exception>
 
 #include "location.hh"
 
 #include "Utils.hh"
-#include "frontend/SymTables.hh"
 #include "frontend/Operators.hh"
+#include "frontend/SymTables.hh"
 #include "visitor/Visitor.hh"
 
 namespace paracl {
+
+class Decl;
+
+using ScopeDecl = Scope<Decl *>;
+
+using ScopeDeclStack = ScopeStack<Decl *>;
 
 enum class NodeType : char {
   UnaryOperator,
@@ -29,6 +35,7 @@ enum class NodeType : char {
   ArraySubscriptExpr,
   InitListExpr,
   CallExpr,
+  InputExpr,
 
   VarDecl,
   ParmVarDecl,
@@ -44,6 +51,7 @@ enum class NodeType : char {
   BreakStmt,
   ContinueStmt,
   ReturnStmt,
+  TranslationUnit,
 };
 
 class INode : public visitor::VisitableBase<INode> {
@@ -85,15 +93,17 @@ public:
   bool isLValue() const { return kind_ == ExprKind::LVal; }
 
   bool isRValue() const { return kind_ == ExprKind::RVal; }
+
+  ExprKind getKind() const { return kind_; }
+
+  void setKind(ExprKind kind) { kind_ = kind; }
 };
 
 class UnaryOperator final : public Expr {
   UnaryOpcode op_;
   Expr *expr_;
 
-  static ExprKind getExprKind(UnaryOpcode ) {
-    return ExprKind::RVal;
-  }
+  static ExprKind getExprKind(UnaryOpcode) { return ExprKind::RVal; }
 
 public:
   VISITABLE();
@@ -106,7 +116,7 @@ public:
 
   Expr *getSubExpr() const { return expr_; }
 
-  void setSubExpr(Expr* expr) { expr_ = expr; }
+  void setSubExpr(Expr *expr) { expr_ = expr; }
 };
 
 class BinaryOperator final : public Expr {
@@ -125,11 +135,11 @@ public:
 
   Expr *getLHS() const { return lhs_; }
 
-  void setLHS(Expr* expr) { lhs_ = expr; }
+  void setLHS(Expr *expr) { lhs_ = expr; }
 
-  Expr* getRHS() const { return rhs_; }
+  Expr *getRHS() const { return rhs_; }
 
-  void setRHS(Expr* expr) { rhs_ = expr; }
+  void setRHS(Expr *expr) { rhs_ = expr; }
 };
 
 class ConditionalOperator final : public Expr {
@@ -147,15 +157,15 @@ public:
 
   Expr *getCondExpr() const { return cond_; }
 
-  void setCondExpr(Expr* expr) { cond_ = expr; }
+  void setCondExpr(Expr *expr) { cond_ = expr; }
 
   Expr *getTrueExpr() const { return trueExpr_; }
 
-  void setTrueExpr(Expr* expr) { trueExpr_ = expr; }
+  void setTrueExpr(Expr *expr) { trueExpr_ = expr; }
 
   Expr *getFalseExpr() const { return falseExpr_; }
 
-  void setFalseExpr(Expr* expr) { falseExpr_ = expr; }
+  void setFalseExpr(Expr *expr) { falseExpr_ = expr; }
 };
 
 class IntegerLiteral final : public Expr {
@@ -168,8 +178,6 @@ public:
       : Expr(loc, ExprKind::RVal, NodeType::IntegerLiteral), value_(value) {}
 
   int getVal() const { return value_; }
-
-  void setVal(int value) { value_ = value; }
 };
 
 class UndefLiteral final : public Expr {
@@ -190,11 +198,14 @@ public:
   VISITABLE();
 
   DeclRefExpr(const location &loc, std::string_view name)
-      : Expr(loc, ExprKind::LVal, NodeType::DeclRefExpr), name_(name), decl_(nullptr) {}
+      : Expr(loc, ExprKind::LVal, NodeType::DeclRefExpr), name_(name),
+        decl_(nullptr) {}
 
   Decl *getDecl() const { return decl_; }
 
-  void setDecl(Decl* decl) { decl_ = decl; }
+  void setDecl(Decl *decl) { decl_ = decl; }
+
+  std::string_view getName() const { return name_; }
 };
 
 enum class ImplicitCastType {
@@ -205,10 +216,14 @@ enum class ImplicitCastType {
 
 inline std::string toString(ImplicitCastType type) {
   switch (type) {
-    case ImplicitCastType::LValueToRValue: return "LValueToRValue";
-    case ImplicitCastType::ArrayToPointerDecay: return "ArrayToPointerDecay";
-    case ImplicitCastType::FunctionToPointerDecay: return "FunctionToPointerDecay";
-    default: throw std::runtime_error("Unknown implicit cast type");
+  case ImplicitCastType::LValueToRValue:
+    return "LValueToRValue";
+  case ImplicitCastType::ArrayToPointerDecay:
+    return "ArrayToPointerDecay";
+  case ImplicitCastType::FunctionToPointerDecay:
+    return "FunctionToPointerDecay";
+  default:
+    throw std::runtime_error("Unknown implicit cast type");
   }
 };
 
@@ -238,7 +253,7 @@ public:
 
   Expr *getExpr() const { return expr_; }
 
-  void setExpr(Expr * expr) { expr_ = expr; }
+  void setExpr(Expr *expr) { expr_ = expr; }
 
   ImplicitCastType getImplicitCastType() const { return castType_; }
 
@@ -258,11 +273,11 @@ public:
 
   Expr *getLHS() const { return lhs_; }
 
-  void setLHS(Expr* expr) { lhs_ = expr; }
+  void setLHS(Expr *expr) { lhs_ = expr; }
 
   Expr *getRHS() const { return rhs_; }
 
-  void setRHS(Expr* expr) { rhs_ = expr; }
+  void setRHS(Expr *expr) { rhs_ = expr; }
 };
 
 class InitListExpr final : public Expr, std::vector<Expr *> {
@@ -270,14 +285,14 @@ public:
   using vector::begin;
   using vector::empty;
   using vector::end;
+  using vector::push_back;
   using vector::size;
+  using vector::value_type;
 
   VISITABLE();
 
   InitListExpr(const location &loc)
       : Expr(loc, ExprKind::RVal, NodeType::InitListExpr) {}
-
-  void addExpr(Expr *expr) { vector::push_back(expr); }
 };
 
 class CallExpr final : public Expr, std::vector<Expr *> {
@@ -287,18 +302,26 @@ public:
   using vector::begin;
   using vector::empty;
   using vector::end;
+  using vector::push_back;
   using vector::size;
+  using vector::value_type;
 
   VISITABLE();
 
   CallExpr(const location &loc, Expr *call)
       : Expr(loc, ExprKind::RVal, NodeType::CallExpr), call_(call) {}
 
-  void addParam(Expr *param) { vector::push_back(param); }
-
   Expr *getCall() const { return call_; }
 
-  void setFunc(Expr *call) { call_ = call; }
+  void setCall(Expr *call) { call_ = call; }
+};
+
+class InputExpr : public Expr {
+public:
+  VISITABLE();
+
+  InputExpr(const location &loc)
+      : Expr(loc, ExprKind::RVal, NodeType::InputExpr) {}
 };
 
 class Type;
@@ -348,20 +371,21 @@ public:
   using vector::begin;
   using vector::empty;
   using vector::end;
+  using vector::push_back;
   using vector::size;
+  using vector::value_type;
 
   VISITABLE();
 
   Function(const location &loc, std::string_view name, NodeType nodeType)
       : Decl(loc, name, nodeType) {}
-
-  void addParam(ParmVarDecl *param) { vector::push_back(param); }
 };
 
 class CompoundStmt;
 
 class FunctionDecl final : public Function {
   CompoundStmt *body_;
+  ScopeDecl scope_;
 
 public:
   VISITABLE();
@@ -372,6 +396,8 @@ public:
   CompoundStmt *getBody() const { return body_; }
 
   void setBody(CompoundStmt *body) { body_ = body; }
+
+  ScopeDecl &getScope() { return scope_; }
 };
 
 class ExternFunctionDecl final : public Function {
@@ -381,7 +407,7 @@ public:
   VISITABLE();
 
   ExternFunctionDecl(const location &loc, std::string_view name)
-      : Function(loc, name_, NodeType::FunctionDecl), ptr_(nullptr) {}
+      : Function(loc, name, NodeType::FunctionDecl), ptr_(nullptr) {}
 
   void *getPtr() const { return ptr_; }
 
@@ -396,50 +422,49 @@ public:
 };
 
 class OutputStmt : public Stmt {
-  Expr* expr_;
+  Expr *expr_;
 
 public:
   VISITABLE();
 
-  OutputStmt(const location &loc, Expr* expr) : Stmt(loc, NodeType::OutputStmt), expr_(expr) {}
+  OutputStmt(const location &loc, Expr *expr)
+      : Stmt(loc, NodeType::OutputStmt), expr_(expr) {}
 
   Expr *getExpr() const { return expr_; }
 
-  void setExpr(Expr* expr) { expr_ = expr; }
+  void setExpr(Expr *expr) { expr_ = expr; }
 };
 
 class CompoundStmt final : public Stmt, std::vector<Stmt *> {
-  Scope scope_;
+  ScopeDecl scope_;
 
 public:
-  using Stmts = std::vector<Stmt *>;
-  using Stmts::begin;
-  using Stmts::empty;
-  using Stmts::end;
-  using Stmts::size;
+  using vector::begin;
+  using vector::empty;
+  using vector::end;
+  using vector::push_back;
+  using vector::size;
+  using vector::value_type;
 
   VISITABLE();
 
   CompoundStmt(const location &loc) : Stmt(loc, NodeType::CompoundStmt) {}
 
-  Scope &getScope() { return scope_; }
-
-  void addStmt(Stmt *stmt) { Stmts::push_back(stmt); }
+  ScopeDecl &getScope() { return scope_; }
 };
 
-class DeclStmt final : public Stmt, std::vector<Decl *> {
+class DeclStmt final: public Stmt, std::vector<Decl *> {
 public:
-  using Decls = std::vector<Decl *>;
-  using Decls::begin;
-  using Decls::empty;
-  using Decls::end;
-  using Decls::size;
+  using vector::begin;
+  using vector::empty;
+  using vector::end;
+  using vector::push_back;
+  using vector::size;
+  using vector::value_type;
 
   VISITABLE();
 
   DeclStmt(const location &loc) : Stmt(loc, NodeType::DeclStmt) {}
-
-  void addDecl(Decl *decl) { Decls::push_back(decl); }
 };
 
 class ValueStmt final : public Stmt {
@@ -453,7 +478,7 @@ public:
 
   Expr *getExpr() const { return expr_; }
 
-  void setExpr(Expr* expr) { expr_ = expr; }
+  void setExpr(Expr *expr) { expr_ = expr; }
 };
 
 class IfStmt final : public Stmt {
@@ -469,7 +494,7 @@ public:
 
   Expr *getCond() const { return cond_; }
 
-  void setCond(Expr* cond) { cond_ = cond; }
+  void setCond(Expr *cond) { cond_ = cond; }
 
   Stmt *getThen() const { return then_; }
 
@@ -488,7 +513,7 @@ public:
 
   Expr *getCond() const { return cond_; }
 
-  void setCond(Expr* cond) { cond_ = cond; }
+  void setCond(Expr *cond) { cond_ = cond; }
 
   Stmt *getBody() const { return body_; }
 };
@@ -520,6 +545,7 @@ public:
 };
 
 class ReturnStmt final : public Stmt {
+  FunctionDecl *decl_ = nullptr;
   Expr *expr_;
 
 public:
@@ -530,19 +556,47 @@ public:
 
   Expr *getExpr() const { return expr_; }
 
-  void setExpr(Expr* expr) { expr_ = expr; }
+  void setExpr(Expr *expr) { expr_ = expr; }
+
+  FunctionDecl *getFunctionDecl() const { return decl_; }
+
+  void setFunctionDecl(FunctionDecl *decl) { decl_ = decl; }
+};
+
+class TranslationUnit final: public Stmt, std::vector<Decl *> {
+  FunctionDecl* main_;
+  ScopeDecl scope_;
+
+public:
+  using vector::begin;
+  using vector::empty;
+  using vector::end;
+  using vector::push_back;
+  using vector::size;
+  using vector::value_type;
+
+  VISITABLE();
+
+  TranslationUnit():
+    Stmt(location{}, NodeType::TranslationUnit), main_(nullptr) {}
+
+  ScopeDecl &getScope() { return scope_; }
+
+  void setMain(FunctionDecl* main) { main_ = main; }
+
+  FunctionDecl* getMain() const { return main_; }
 };
 
 using Exprs =
     std::tuple<UnaryOperator, BinaryOperator, ConditionalOperator,
                IntegerLiteral, UndefLiteral, DeclRefExpr, ImplicitCastExpr,
-               ArraySubscriptExpr, InitListExpr, CallExpr>;
+               ArraySubscriptExpr, InitListExpr, CallExpr, InputExpr>;
 
 using Decls =
     std::tuple<VarDecl, ParmVarDecl, FunctionDecl, ExternFunctionDecl>;
 
-using Stmts = std::tuple<OutputStmt, CompoundStmt, DeclStmt, ValueStmt, IfStmt, WhileStmt,
-                         BreakStmt, ContinueStmt, ReturnStmt>;
+using Stmts = std::tuple<OutputStmt, CompoundStmt, DeclStmt, ValueStmt, IfStmt,
+                         WhileStmt, BreakStmt, ContinueStmt, ReturnStmt, TranslationUnit>;
 
 using AllNodes = utils::tuple_cat_t<Exprs, Decls, Stmts>;
 

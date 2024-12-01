@@ -7,17 +7,16 @@
 #include <vector>
 
 #include "Utils.hh"
-#include "frontend/SymTables.hh"
 
 namespace paracl {
 
 class INode;
 
+class TranslationUnit;
+
 class ASTBuilder final {
   std::vector<std::unique_ptr<INode>> nodes_;
-  ScopeStack scopes_;
-  //FunctionTable funcs_;
-  INode *root_ = nullptr;
+  TranslationUnit *root_ = nullptr;
 
 public:
   ASTBuilder() = default;
@@ -35,41 +34,9 @@ public:
     return ptr;
   }
 
-  void setRoot(INode *root) noexcept { root_ = root; }
+  void setRoot(TranslationUnit *root) noexcept { root_ = root; }
 
-  INode *getRoot() noexcept { return root_; }
-
-  void beginScope(Scope &scope) {
-    scopes_.beginScope(scope);
-  }
-
-  void endScope() {
-    scopes_.endScope();
-  }
-
-  void declare(std::string_view name, Decl *decl) {
-    scopes_.declare(name, decl);
-  }
-
-  bool declared(std::string_view name) {
-    return scopes_.declared(name);
-  }
-
-  std::optional<Decl *> lookup(std::string_view name) {
-    return scopes_.lookup(name);
-  }
-
-  // void declareFunction(std::string_view name, Function *function) {
-  //   return funcs_.declare(name, function);
-  // }
-
-  // bool declaredFunction(std::string_view name) {
-  //   return funcs_.declared(name);
-  // }
-
-  // std::optional<Function *> lookupFunction(std::string_view name) {
-  //   return funcs_.lookup(name);
-  // }
+  TranslationUnit *getRoot() noexcept { return root_; }
 };
 
 } // namespace paracl

@@ -20,10 +20,9 @@ inline std::string toString(UnaryOpcode op) {
   case UnaryOpcode::UN_NOT:
     return "!";
   default:
-    throw std::logic_error("Unknown unary opcode");
+    throw std::runtime_error("Unknown unary opcode");
   }
 }
-
 
 enum class BinaryOpcode {
   BIN_MUL,
@@ -80,7 +79,7 @@ inline std::string toString(BinaryOpcode op) {
   case BinaryOpcode::BIN_COMMA:
     return ",";
   default:
-    throw std::logic_error("Unknown binary opcode");
+    throw std::runtime_error("Unknown binary opcode");
   }
 }
 

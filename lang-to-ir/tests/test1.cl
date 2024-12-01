@@ -1,7 +1,14 @@
-int func(int y): fib {
-	print(y);
-	return y;
+
+
+int func(int x): bar {
+	return x;
 }
 
-int[2] x = {0, 1};
-int y = x[0];
+void func(int y, int (int) foo): fib {
+	return fib(y-1, foo);
+}
+
+int[1] x = {1};
+while(x[0]) {
+	print(x[0]+1);
+}
