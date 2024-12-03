@@ -1,7 +1,5 @@
 #pragma once
 
-#include <stdbool.h>
-
 #define GUI_WIDTH 512
 #define GUI_HEIGHT 512
 
@@ -20,7 +18,7 @@ extern void gui_exit();
 extern void gui_flush();
 
 // This function returns true when user asked to quit.
-extern bool gui_quit_event();
+extern int gui_quit_event();
 
 // This function sets pixel at point with coordinates (x, y) with rgb color.
 extern void gui_set_pixel(int x, int y, int color);

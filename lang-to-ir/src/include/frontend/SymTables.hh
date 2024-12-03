@@ -61,8 +61,7 @@ public:
       back.get().declare(name, value);
       return;
     }
-    assert(0);
-    throw std::runtime_error("can not declare as scope is empty");
+    assert(0 && "can not declare as scope is empty");
   }
 
   bool declared(std::string_view name) const {

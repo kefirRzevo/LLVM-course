@@ -11,7 +11,7 @@ namespace paracl {
 class SemanticAnalyzer final
     : public visitor::VisitorBase<INode, SemanticAnalyzer, bool> {
   Driver &driver_;
-  ScopeStack<Decl*> scopes_;
+  ScopeDeclStack scopes_;
   FunctionDecl* curFunc_;
   FunctionDecl* mainFunc_;
   std::vector<WhileStmt *> loops_;
@@ -61,12 +61,6 @@ public:
     assert(root);
     mainFunc_ = root->getMain();
     assert(mainFunc_);
-  }
-
-  void analyze() {
-    auto root = driver_.getRoot();
-    assert(root);
-    apply(*root);
   }
 
   bool visit(UnaryOperator &node) {
@@ -360,11 +354,22 @@ public:
     if (!apply(*call))
       return false;
     auto callType = call->getType();
-    if (callType->getKind() != TypeKind::FunctionType) {
+    auto hasErr = bool{false};
+    if (callType->getKind() != TypeKind::FunctionType)
+      hasErr = true;
+    if (callType->getKind() == TypeKind::PointerType) {
+        auto asPointer = static_cast<PointerType*>(callType);
+        auto elemType = asPointer->getElemType();
+        if (elemType->getKind() == TypeKind::FunctionType) {
+          hasErr = false;
+          callType = elemType;
+        }
+    }
+    if (hasErr) {
       driver_.reportError<MismatchingType>(loc);
       return false;
     }
-    auto hasErr = bool{false};
+    auto asFunction = static_cast<FunctionType *>(callType);
     std::transform(node.begin(), node.end(), node.begin(), [&](auto &&expr) {
       assert(expr);
       if (!apply(*expr))
@@ -382,7 +387,6 @@ public:
                      assert(paramType);
                      return paramType;
                    });
-    auto asFunction = static_cast<FunctionType *>(callType);
     auto retType = asFunction->getRetType();
     assert(retType);
     if (!std::equal(paramTypes.begin(), paramTypes.end(), asFunction->begin(),
@@ -435,6 +439,19 @@ public:
     assert(type);
     auto exprType = expr->getType();
     assert(exprType);
+    if (exprType->getKind() == TypeKind::ArrayType && type->getKind() == TypeKind::ArrayType) {
+      auto exprTypeAsArr = static_cast<ArrayType*>(exprType);
+      auto typeAsArr = static_cast<ArrayType*>(type);
+      auto exprElemType = exprTypeAsArr->getElemType();
+      auto exprElemCount = exprTypeAsArr->getElemCount();
+      auto elemType = typeAsArr->getElemType();
+      auto elemCount = typeAsArr->getElemCount();
+      if (exprElemType == elemType && exprElemCount != elemCount) {
+        auto correctExprType = driver_.getArrayType(elemType, elemCount);
+        expr->setType(correctExprType);
+        exprType = correctExprType;
+      } 
+    }
     if (type != exprType) {
       driver_.reportError<MismatchingTypeAssignExpr>(loc, type->getAsString(),
                                                      exprType->getAsString());
@@ -458,7 +475,7 @@ public:
     const auto &loc = node.getLoc();
     auto name = node.getName();
     if (scopes_.declared(name)) {
-      //driver_.reportError<Redefinition>(loc, std::string{name});
+      driver_.reportError<Redefinition>(loc, std::string{name});
       return false;
     }
     curFunc_ = std::addressof(node);
@@ -479,7 +496,7 @@ public:
     const auto &loc = node.getLoc();
     auto name = node.getName();
     if (scopes_.declared(name)) {
-      // driver_.reportError<Redefinition>(loc, std::string{name});
+      driver_.reportError<Redefinition>(loc, std::string{name});
       return false;
     }
     scopes_.declare(name, std::addressof(node));
@@ -529,21 +546,7 @@ public:
     const auto &loc = node.getLoc();
     auto expr = node.getExpr();
     assert(expr);
-    if (!apply(*expr))
-      return false;
-    if (expr->isLValue()) {
-      auto cast = createLValToRValCast(expr);
-      assert(cast);
-      node.setExpr(cast);
-      expr = cast;
-    }
-    auto exprType = expr->getType();
-    assert(exprType);
-    if (exprType != driver_.getIntType()) {
-      driver_.reportError<IntTypeRequired>(loc, exprType->getAsString());
-      return false;
-    }
-    return true;
+    return apply(*expr);
   }
 
   bool visit(IfStmt &node) {
@@ -653,9 +656,6 @@ public:
       assert(decl);
       apply(*decl);
     }
-    auto main = node.getMain();
-    assert(main);
-    apply(*main);
     scopes_.endScope();
     return true;
   }
@@ -663,7 +663,13 @@ public:
 
 void semanticAnalyze(Driver& driver) {
 	SemanticAnalyzer analyzer{driver};
-	analyzer.analyze();
+  auto root = driver.getRoot();
+  auto main = root->getMain();
+  root->push_back(main);
+  analyzer.apply(*root);
+  auto retStmt = driver.createNode<ReturnStmt>(location{}, nullptr);
+  auto body = main->getBody();
+  body->push_back(retStmt);
 }
 
 } // namespace paracl

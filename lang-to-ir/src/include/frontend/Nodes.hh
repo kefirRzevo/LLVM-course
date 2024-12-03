@@ -103,13 +103,11 @@ class UnaryOperator final : public Expr {
   UnaryOpcode op_;
   Expr *expr_;
 
-  static ExprKind getExprKind(UnaryOpcode) { return ExprKind::RVal; }
-
 public:
   VISITABLE();
 
   UnaryOperator(const location &loc, UnaryOpcode op, Expr *expr)
-      : Expr(loc, getExprKind(op), NodeType::UnaryOperator), op_(op),
+      : Expr(loc, ExprKind::RVal, NodeType::UnaryOperator), op_(op),
         expr_(expr) {}
 
   UnaryOpcode getOpcode() const { return op_; }

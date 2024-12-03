@@ -1,12 +1,11 @@
 #include "frontend/Driver.hh"
 #include "frontend/ASTBuilder.hh"
 #include "frontend/DotGenerator.hh"
-#include "frontend/Errors.hh"
 #include "frontend/Lexer.hh"
 #include "frontend/Types.hh"
 #include "frontend/SemanticAnalyzer.hh"
 #include "frontend/LibraryLoader.hh"
-#include "parser.tab.hh"
+#include "backend/IRGen.hh"
 
 namespace paracl {
 
@@ -19,7 +18,10 @@ Driver::Driver(std::string_view moduleName)
         lexer_->setFilepath(moduleName);
         auto root = astBuilder_->createNode<TranslationUnit>();
         astBuilder_->setRoot(root);
+        auto voidType = getVoidType();
+        auto mainType = getFunctionType(voidType, {});
         auto main = astBuilder_->createNode<FunctionDecl>(location{}, "main");
+        main->setType(mainType);
         root->setMain(main);
         auto body = astBuilder_->createNode<CompoundStmt>(location{});
         main->setBody(body);
@@ -65,6 +67,11 @@ FunctionType *Driver::getFunctionType(Type *retType, std::vector<Type *> &&param
 void Driver::analyze() {
   ::paracl::semanticAnalyze(*this);
 }
+
+void Driver::execute() {
+  ::paracl::execute(moduleName_, getRoot());
+}
+
 
 Driver::~Driver() = default;
 

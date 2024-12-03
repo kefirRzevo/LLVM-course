@@ -35,7 +35,7 @@ void gui_flush() {
   SDL_RenderPresent(Renderer);
 }
 
-bool gui_quit_event() {
+int gui_quit_event() {
   SDL_PumpEvents();
   return SDL_HasEvent(SDL_QUIT) == SDL_TRUE;
 }

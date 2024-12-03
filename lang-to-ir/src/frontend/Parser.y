@@ -364,6 +364,7 @@
 	initializer
 		: assignment_expression { $$ = $1; }
 		| LCURLY initializer_list RCURLY { $$ = $2; }
+		| LCURLY RCURLY { $$ = driver.createNode<InitListExpr>(@$); }
 
 	initializer_list
 		: initializer {

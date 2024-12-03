@@ -91,6 +91,7 @@ private:
     if (dotFile_.has_value()) {
       driver.generateDot(dotFile_.value());
     }
+    driver.execute();
     // if (clFile_.has_value()) {
     //   driver.generateCl(clFile_.value());
     // }

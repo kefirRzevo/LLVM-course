@@ -76,6 +76,8 @@ public:
   void generateDot(std::string_view filepath) const;
 
   void analyze();
+
+  void execute();
 };
 
 } // namespace paracl

@@ -118,8 +118,9 @@ public:
 
   void visit(ImplicitCastExpr &node) {
     auto expr = node.getExpr();
-    auto label = toString(node.getImplicitCastType());
     assert(expr);
+    auto castType = node.getImplicitCastType();
+    auto label = toString(castType);
     printExpr(node, "ImplicitCastExpr", label);
     printLink(node, *expr);
     apply(*expr);
@@ -127,8 +128,9 @@ public:
 
   void visit(ArraySubscriptExpr &node) {
     auto lhs = node.getLHS();
+    assert(lhs);
     auto rhs = node.getRHS();
-    assert(lhs && rhs);
+    assert(rhs);
     printExpr(node, "ArraySubscriptExpr");
     printLink(node, *lhs);
     printLink(node, *rhs);
@@ -151,10 +153,10 @@ public:
     printExpr(node, "CallExpr");
     printLink(node, *call);
     apply(*call);
-    for (auto &&parm : node) {
-      assert(parm);
-      printLink(node, *parm);
-      apply(*parm);
+    for (auto &&param : node) {
+      assert(param);
+      printLink(node, *param);
+      apply(*param);
     }
   }
 
@@ -228,9 +230,10 @@ public:
 
   void visit(IfStmt &node) {
     auto cond = node.getCond();
+    assert(cond);
     auto then = node.getThen();
+    assert(then);
     auto Else = node.getElse();
-    assert(cond && then && Else);
     printLink(node, *cond);
     printLink(node, *then);
     apply(*cond);
@@ -239,15 +242,16 @@ public:
       printStmt(node, "IfElseStmt");
       printLink(node, *Else);
       apply(*Else);
-    } else {
-      printStmt(node, "IfStmt");
+      return;
     }
+    printStmt(node, "IfStmt");
   }
 
   void visit(WhileStmt &node) {
     auto cond = node.getCond();
+    assert(cond);
     auto body = node.getBody();
-    assert(cond && body);
+    assert(body);
     printStmt(node, "WhileStmt");
     printLink(node, *cond);
     printLink(node, *body);
@@ -261,10 +265,11 @@ public:
 
   void visit(ReturnStmt &node) {
     auto expr = node.getExpr();
-    assert(expr);
     printStmt(node, "ReturnStmt");
-    printLink(node, *expr);
-    apply(*expr);
+    if (expr) {
+      printLink(node, *expr);
+      apply(*expr);
+    }
   }
 
   void visit(TranslationUnit &node) {
@@ -274,10 +279,6 @@ public:
       printLink(node, *decl);
       apply(*decl);
     }
-    auto main = node.getMain();
-    assert(main);
-    printLink(node, *main);
-    apply(*main);
   }
 };
 

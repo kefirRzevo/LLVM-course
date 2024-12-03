@@ -10,8 +10,9 @@ find_package(FLEX REQUIRED)
 find_package(BISON REQUIRED)
 find_package(Boost 1.74 COMPONENTS program_options REQUIRED)
 find_package(LLVM REQUIRED CONFIG)
+find_package(SDL2 REQUIRED)
 
-add_definitions(-std=c++20 -stdlib=libstdc++)
+add_definitions(-std=c++20)
 set(CMAKE_BUILD_TYPE Debug)
 
 flex_target(
@@ -34,6 +35,7 @@ set(PARACL_SOURCES
   src/frontend/LibraryLoader.cc
   src/ParaCL.cc
   src/backend/IRGen.cc
+  ${CMAKE_SOURCE_DIR}/../gui-app/lib/GUILib.c
 )
 add_executable(
   ${PARACL}
@@ -49,6 +51,7 @@ target_include_directories(
   ${LLVM_INCLUDE_DIRS}
   src/include
   ${Boost_INCLUDE_DIR}
+  ${CMAKE_SOURCE_DIR}/../gui-app/include
 )
 llvm_map_components_to_libnames(
   llvm_libs
@@ -64,6 +67,8 @@ llvm_map_components_to_libnames(
 
 target_link_libraries(
   ${PARACL}
+  PRIVATE
   ${Boost_PROGRAM_OPTIONS_LIBRARY}
-  ${llvm_libs}
+  ${SDL2_LIBRARIES}
+  LLVM
 )
