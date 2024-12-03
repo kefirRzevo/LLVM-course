@@ -270,6 +270,12 @@ public:
     assert(rhs);
     if (!apply(*rhs))
       return false;
+    if (rhs->isLValue()) {
+      auto cast = createLValToRValCast(rhs);
+      assert(cast);
+      node.setRHS(cast);
+      rhs = cast;
+    }
     auto rhsType = rhs->getType();
     assert(rhsType);
     auto intType = driver_.getIntType();
@@ -441,16 +447,10 @@ public:
     assert(exprType);
     if (exprType->getKind() == TypeKind::ArrayType && type->getKind() == TypeKind::ArrayType) {
       auto exprTypeAsArr = static_cast<ArrayType*>(exprType);
-      auto typeAsArr = static_cast<ArrayType*>(type);
-      auto exprElemType = exprTypeAsArr->getElemType();
       auto exprElemCount = exprTypeAsArr->getElemCount();
-      auto elemType = typeAsArr->getElemType();
-      auto elemCount = typeAsArr->getElemCount();
-      if (exprElemType == elemType && exprElemCount != elemCount) {
-        auto correctExprType = driver_.getArrayType(elemType, elemCount);
-        expr->setType(correctExprType);
-        exprType = correctExprType;
-      } 
+      if (exprElemCount == 0)
+        expr->setType(type);
+      exprType = type;
     }
     if (type != exprType) {
       driver_.reportError<MismatchingTypeAssignExpr>(loc, type->getAsString(),
@@ -463,6 +463,7 @@ public:
   bool visit(ParmVarDecl &node) {
     const auto &loc = node.getLoc();
     auto name = node.getName();
+    auto type = node.getType();
     if (scopes_.declared(name)) {
       driver_.reportError<Redefinition>(loc, std::string{name});
       return false;

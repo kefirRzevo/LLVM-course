@@ -185,6 +185,10 @@ public:
 				return builder_->CreateAdd(llvmLhs, llvmRhs);
 			case BinaryOpcode::BIN_SUB:
 				return builder_->CreateSub(llvmLhs, llvmRhs);
+			case BinaryOpcode::BIN_SHL:
+    		return builder_->CreateShl(llvmLhs, llvmRhs);
+			case BinaryOpcode::BIN_SHR:
+				return builder_->CreateAShr(llvmLhs, llvmRhs);
 			case BinaryOpcode::BIN_L:
 				return builder_->CreateICmpSLT(llvmLhs, llvmRhs);
 			case BinaryOpcode::BIN_G:
@@ -198,9 +202,13 @@ public:
 			case BinaryOpcode::BIN_NE:
 				return builder_->CreateICmpNE(llvmLhs, llvmRhs);
 			case BinaryOpcode::BIN_AND:
+			case BinaryOpcode::BIN_BIT_AND:
 				return builder_->CreateAnd(llvmLhs, llvmRhs);
+			case BinaryOpcode::BIN_BIT_OR:
 			case BinaryOpcode::BIN_OR:
 				return builder_->CreateOr(llvmLhs, llvmRhs);
+			case BinaryOpcode::BIN_BIT_XOR:
+				return builder_->CreateXor(llvmLhs, llvmRhs);
 			default:
 				assert(0 && "unreachable");
 			}
@@ -250,8 +258,18 @@ public:
 		switch (castType) {
 		case ImplicitCastType::LValueToRValue: {
 			auto type = node.getType();
-			auto llvmType = getLLVMType(type);
-			return builder_->CreateLoad(llvmType, llvmVal);
+			if (type->getKind() != TypeKind::PointerType) {
+				auto llvmType = getLLVMType(type);
+				return builder_->CreateLoad(llvmType, llvmVal);
+			}
+			return llvmVal;
+		}
+		case ImplicitCastType::ArrayToPointerDecay: {
+			auto exprType = expr->getType();
+			assert(exprType->getKind() == TypeKind::ArrayType);
+			auto exprTypeAsArr = static_cast<ArrayType*>(exprType);
+			auto llvmExprType = getLLVMType(exprTypeAsArr);
+			return builder_->CreateGEP(llvmExprType, llvmVal, builder_->getInt32(0));
 		}
 		default:
 			return llvmVal;

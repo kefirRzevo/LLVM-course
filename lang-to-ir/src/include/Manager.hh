@@ -15,8 +15,8 @@ namespace paracl {
 
 class Manager final {
 private:
-   std::optional<std::string> inputFile_ = "./tests/test1.cl";
-   std::optional<std::string> dotFile_ = "./tests/a.dot";
+   std::optional<std::string> inputFile_ = "./tests/app.cl";
+   std::optional<std::string> dotFile_ = "./tests/app.dot";
    bool help_ = false;
 
   // po::options_description cmdline_{"Options"};
@@ -92,24 +92,6 @@ private:
       driver.generateDot(dotFile_.value());
     }
     driver.execute();
-    // if (clFile_.has_value()) {
-    //   driver.generateCl(clFile_.value());
-    // }
-    // if (cppFile_.has_value()) {
-    //   driver.generateCpp(cppFile_.value());
-    // }
-
-    // NodeCodegen codegener;
-    // auto im = codegener.codegen(driver.getRoot());
-    // if (!im.has_value()) {
-    //   throw std::runtime_error("Couldn't get Image");
-    // }
-    // if (disasmFile_.has_value()) {
-    //   im->disassemble(disasmFile_.value());
-    // }
-    // VirtualMachine m;
-    // m.loadImage(std::move(im.value()));
-    // m.execute();
   }
 
 public:

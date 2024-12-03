@@ -67,11 +67,16 @@
 
 	ASSIGN      "="
 	AND_OP      "&&"
+	BIT_AND			"&"
 	OR_OP       "||"
+	BIT_OR      "|"
+	BIT_XOR 		"^"
 	LE_OP       "<="
 	GE_OP       ">="
-	G_OP        ">"
+	LEFT_OP     "<<"
 	L_OP        "<"
+	RIGHT_OP    ">>"
+	G_OP        ">"
 	EQ_OP       "=="
 	NE_OP       "!="
 	SEMICOL     ";"
@@ -103,8 +108,12 @@
 	unary_expression
 	multiplicative_expression
 	additive_expression
+	shift_expression
 	relational_expression
 	equality_expression
+	and_expression
+	exclusive_or_expression
+	inclusive_or_expression
 	logical_and_expression
 	logical_or_expression
 	conditional_expression
@@ -219,9 +228,17 @@
 		} | additive_expression SUB_OP multiplicative_expression {
 			$$ = driver.createNode<BinaryOperator>(@$, BinaryOpcode::BIN_SUB, $1, $3);
 		}
+	
+	shift_expression
+		: additive_expression { $$ = $1; }
+		| shift_expression LEFT_OP additive_expression {
+			$$ = driver.createNode<BinaryOperator>(@$, BinaryOpcode::BIN_SHL, $1, $3);
+		} | shift_expression RIGHT_OP additive_expression {
+			$$ = driver.createNode<BinaryOperator>(@$, BinaryOpcode::BIN_SHR, $1, $3);
+		}
 
 	relational_expression
-		: additive_expression { $$ = $1; }
+		: shift_expression { $$ = $1; }
 		| relational_expression L_OP additive_expression {
 			$$ = driver.createNode<BinaryOperator>(@$, BinaryOpcode::BIN_L, $1, $3);
 		} | relational_expression G_OP additive_expression {
@@ -241,8 +258,26 @@
 			$$ = driver.createNode<BinaryOperator>(@$, BinaryOpcode::BIN_NE, $1, $3);
 		}
 
-	logical_and_expression
+	and_expression
 		: equality_expression { $$ = $1; }
+		| and_expression BIT_AND equality_expression {
+			$$ = driver.createNode<BinaryOperator>(@$, BinaryOpcode::BIN_BIT_AND, $1, $3);
+		}
+
+	exclusive_or_expression
+		: and_expression { $$ = $1; }
+		| exclusive_or_expression BIT_OR and_expression {
+			$$ = driver.createNode<BinaryOperator>(@$, BinaryOpcode::BIN_BIT_OR, $1, $3);
+		}
+
+	inclusive_or_expression
+		: exclusive_or_expression { $$ = $1; }
+		| inclusive_or_expression BIT_XOR exclusive_or_expression {
+			$$ = driver.createNode<BinaryOperator>(@$, BinaryOpcode::BIN_BIT_XOR, $1, $3);
+		}
+
+	logical_and_expression
+		: inclusive_or_expression { $$ = $1; }
 		| logical_and_expression AND_OP equality_expression {
 			$$ = driver.createNode<BinaryOperator>(@$, BinaryOpcode::BIN_AND, $1, $3);
 		}
@@ -355,8 +390,13 @@
 		: type IDENTIFIER {
 			auto parm = driver.createNode<ParmVarDecl>(@$, $2);
 			auto type = $1;
-			if (type->getKind() == TypeKind::FunctionType)
+			if (type->getKind() == TypeKind::FunctionType) {
 				type = driver.getPointerType(type);
+			} else if (type->getKind() == TypeKind::ArrayType) {
+				auto asArray = static_cast<ArrayType*>(type);
+				auto elemType = asArray->getElemType();
+				type = driver.getPointerType(elemType);
+			}
 			parm->setType(type);
 			$$ = parm;
 		}

@@ -32,6 +32,9 @@ enum class BinaryOpcode {
   BIN_ADD,
   BIN_SUB,
 
+  BIN_SHL,
+  BIN_SHR,
+
   BIN_L,
   BIN_G,
   BIN_LE,
@@ -41,6 +44,10 @@ enum class BinaryOpcode {
   BIN_NE,
   BIN_AND,
   BIN_OR,
+
+  BIN_BIT_AND,
+  BIN_BIT_OR,
+  BIN_BIT_XOR,
 
   BIN_ASSIGN,
   BIN_COMMA,
@@ -58,6 +65,10 @@ inline std::string toString(BinaryOpcode op) {
     return "+";
   case BinaryOpcode::BIN_SUB:
     return "-";
+  case BinaryOpcode::BIN_SHL:
+    return "<<";
+  case BinaryOpcode::BIN_SHR:
+    return ">>";
   case BinaryOpcode::BIN_L:
     return "<";
   case BinaryOpcode::BIN_G:
@@ -74,6 +85,12 @@ inline std::string toString(BinaryOpcode op) {
     return "&&";
   case BinaryOpcode::BIN_OR:
     return "||";
+  case BinaryOpcode::BIN_BIT_AND:
+    return "&"; 
+  case BinaryOpcode::BIN_BIT_OR:
+    return "|"; 
+  case BinaryOpcode::BIN_BIT_XOR:
+    return "^"; 
   case BinaryOpcode::BIN_ASSIGN:
     return "=";
   case BinaryOpcode::BIN_COMMA:
@@ -90,6 +107,8 @@ inline constexpr bool isArithmetic(BinaryOpcode op) {
   case BinaryOpcode::BIN_MOD:
   case BinaryOpcode::BIN_ADD:
   case BinaryOpcode::BIN_SUB:
+  case BinaryOpcode::BIN_SHL:
+  case BinaryOpcode::BIN_SHR:
   case BinaryOpcode::BIN_L:
   case BinaryOpcode::BIN_G:
   case BinaryOpcode::BIN_LE:
@@ -98,6 +117,9 @@ inline constexpr bool isArithmetic(BinaryOpcode op) {
   case BinaryOpcode::BIN_NE:
   case BinaryOpcode::BIN_AND:
   case BinaryOpcode::BIN_OR:
+  case BinaryOpcode::BIN_BIT_AND:
+  case BinaryOpcode::BIN_BIT_OR:
+  case BinaryOpcode::BIN_BIT_XOR:
     return true;
   default:
     return false;

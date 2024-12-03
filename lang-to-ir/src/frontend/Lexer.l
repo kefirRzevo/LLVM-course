@@ -45,10 +45,15 @@ comment_single  ([/][/].*)
 "func"          { return Parser::make_FUNC(updateLocation()); }
 "return"        { return Parser::make_RETURN(updateLocation()); }
 "&&"            { return Parser::make_AND_OP(updateLocation()); }
+"&"             { return Parser::make_BIT_AND(updateLocation()); }
 "||"            { return Parser::make_OR_OP(updateLocation()); }
+"|"             { return Parser::make_BIT_OR(updateLocation()); }
+"^"             { return Parser::make_BIT_XOR(updateLocation()); }
 "<="            { return Parser::make_LE_OP(updateLocation()); }
 ">="            { return Parser::make_GE_OP(updateLocation()); }
+">>"            { return Parser::make_RIGHT_OP(updateLocation()); }
 ">"             { return Parser::make_G_OP(updateLocation()); }
+"<<"            { return Parser::make_LEFT_OP(updateLocation()); }
 "<"             { return Parser::make_L_OP(updateLocation()); }
 "=="            { return Parser::make_EQ_OP(updateLocation()); }
 "!="            { return Parser::make_NE_OP(updateLocation()); }
