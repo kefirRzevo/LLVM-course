@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include "GUILib.h"
 
 void set_bound_cond(bool layer[GUI_WIDTH]) {
