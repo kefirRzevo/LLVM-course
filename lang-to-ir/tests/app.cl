@@ -34,7 +34,6 @@ void func(int[512] prev, int[512] next): apply_rule {
 gui_init();
 
 int[512][512] data = {};
-print(data[0][0]);
 set_bound_cond(data[0]);
 int cur = 0;
 while (1) {
