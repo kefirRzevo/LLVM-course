@@ -4,6 +4,6 @@ namespace paracl {
 
 class Driver;
 
-void semanticAnalyze(Driver& driver);
+void semanticAnalyze(Driver &driver);
 
 } // namespace paracl

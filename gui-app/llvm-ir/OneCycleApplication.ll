@@ -85,7 +85,7 @@ define dso_local void @app() local_unnamed_addr #0 {
   br i1 %9, label %10, label %2, !llvm.loop !5
 
 10:                                               ; preds = %2
-  %11 = tail call zeroext i1 @gui_quit_event() #5
+  %11 = tail call i32 @gui_quit_event() #5
   %12 = getelementptr inbounds [512 x [512 x i8]], ptr %1, i64 0, i64 1
   br label %13
 
@@ -158,7 +158,7 @@ define dso_local void @app() local_unnamed_addr #0 {
 ; Function Attrs: mustprogress nocallback nofree nounwind willreturn memory(argmem: write)
 declare void @llvm.memset.p0.i64(ptr nocapture writeonly, i8, i64, i1 immarg) #4
 
-declare zeroext i1 @gui_quit_event() local_unnamed_addr #2
+declare i32 @gui_quit_event() local_unnamed_addr #2
 
 declare void @gui_set_pixel(i32 noundef, i32 noundef, i32 noundef) local_unnamed_addr #2
 

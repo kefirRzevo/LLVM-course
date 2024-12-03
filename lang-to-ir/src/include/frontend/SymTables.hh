@@ -41,7 +41,7 @@ public:
 };
 
 template <typename Value>
-class ScopeStack final: std::vector<std::reference_wrapper<Scope<Value>>> {
+class ScopeStack final : std::vector<std::reference_wrapper<Scope<Value>>> {
 public:
   using Stack = std::vector<std::reference_wrapper<Scope<Value>>>;
   using Stack::begin;
@@ -51,7 +51,7 @@ public:
   using Stack::rend;
   using Stack::size;
 
-  void beginScope(Scope<Value>& scope) { Stack::push_back(scope); }
+  void beginScope(Scope<Value> &scope) { Stack::push_back(scope); }
 
   void endScope() { Stack::pop_back(); }
 

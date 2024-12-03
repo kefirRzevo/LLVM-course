@@ -6,6 +6,6 @@ namespace paracl {
 
 class TranslationUnit;
 
-void execute(std::string_view filepath, TranslationUnit* root);
+void execute(std::string_view filepath, TranslationUnit *root);
 
 } // namespace paracl

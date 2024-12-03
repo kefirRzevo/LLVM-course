@@ -12,8 +12,8 @@ class SemanticAnalyzer final
     : public visitor::VisitorBase<INode, SemanticAnalyzer, bool> {
   Driver &driver_;
   ScopeDeclStack scopes_;
-  FunctionDecl* curFunc_;
-  FunctionDecl* mainFunc_;
+  FunctionDecl *curFunc_;
+  FunctionDecl *mainFunc_;
   std::vector<WhileStmt *> loops_;
 
   Expr *createLValToRValCast(Expr *expr) {
@@ -164,7 +164,7 @@ public:
       node.setType(rhsType);
       node.setKind(rhs->getKind());
       return true;
-    } 
+    }
     throw std::runtime_error("Unknown binary opcode");
   }
 
@@ -364,12 +364,12 @@ public:
     if (callType->getKind() != TypeKind::FunctionType)
       hasErr = true;
     if (callType->getKind() == TypeKind::PointerType) {
-        auto asPointer = static_cast<PointerType*>(callType);
-        auto elemType = asPointer->getElemType();
-        if (elemType->getKind() == TypeKind::FunctionType) {
-          hasErr = false;
-          callType = elemType;
-        }
+      auto asPointer = static_cast<PointerType *>(callType);
+      auto elemType = asPointer->getElemType();
+      if (elemType->getKind() == TypeKind::FunctionType) {
+        hasErr = false;
+        callType = elemType;
+      }
     }
     if (hasErr) {
       driver_.reportError<MismatchingType>(loc);
@@ -445,8 +445,9 @@ public:
     assert(type);
     auto exprType = expr->getType();
     assert(exprType);
-    if (exprType->getKind() == TypeKind::ArrayType && type->getKind() == TypeKind::ArrayType) {
-      auto exprTypeAsArr = static_cast<ArrayType*>(exprType);
+    if (exprType->getKind() == TypeKind::ArrayType &&
+        type->getKind() == TypeKind::ArrayType) {
+      auto exprTypeAsArr = static_cast<ArrayType *>(exprType);
       auto exprElemCount = exprTypeAsArr->getElemCount();
       if (exprElemCount == 0)
         expr->setType(type);
@@ -651,7 +652,7 @@ public:
   }
 
   bool visit(TranslationUnit &node) {
-    auto& globalScope = node.getScope();
+    auto &globalScope = node.getScope();
     scopes_.beginScope(globalScope);
     for (auto &&decl : node) {
       assert(decl);
@@ -662,8 +663,8 @@ public:
   }
 };
 
-void semanticAnalyze(Driver& driver) {
-	SemanticAnalyzer analyzer{driver};
+void semanticAnalyze(Driver &driver) {
+  SemanticAnalyzer analyzer{driver};
   auto root = driver.getRoot();
   auto main = root->getMain();
   root->push_back(main);

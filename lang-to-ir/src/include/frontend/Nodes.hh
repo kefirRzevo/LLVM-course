@@ -451,7 +451,7 @@ public:
   ScopeDecl &getScope() { return scope_; }
 };
 
-class DeclStmt final: public Stmt, std::vector<Decl *> {
+class DeclStmt final : public Stmt, std::vector<Decl *> {
 public:
   using vector::begin;
   using vector::empty;
@@ -561,8 +561,8 @@ public:
   void setFunctionDecl(FunctionDecl *decl) { decl_ = decl; }
 };
 
-class TranslationUnit final: public Stmt, std::vector<Decl *> {
-  FunctionDecl* main_;
+class TranslationUnit final : public Stmt, std::vector<Decl *> {
+  FunctionDecl *main_;
   ScopeDecl scope_;
 
 public:
@@ -575,14 +575,14 @@ public:
 
   VISITABLE();
 
-  TranslationUnit():
-    Stmt(location{}, NodeType::TranslationUnit), main_(nullptr) {}
+  TranslationUnit()
+      : Stmt(location{}, NodeType::TranslationUnit), main_(nullptr) {}
 
   ScopeDecl &getScope() { return scope_; }
 
-  void setMain(FunctionDecl* main) { main_ = main; }
+  void setMain(FunctionDecl *main) { main_ = main; }
 
-  FunctionDecl* getMain() const { return main_; }
+  FunctionDecl *getMain() const { return main_; }
 };
 
 using Exprs =
@@ -593,8 +593,9 @@ using Exprs =
 using Decls =
     std::tuple<VarDecl, ParmVarDecl, FunctionDecl, ExternFunctionDecl>;
 
-using Stmts = std::tuple<OutputStmt, CompoundStmt, DeclStmt, ValueStmt, IfStmt,
-                         WhileStmt, BreakStmt, ContinueStmt, ReturnStmt, TranslationUnit>;
+using Stmts =
+    std::tuple<OutputStmt, CompoundStmt, DeclStmt, ValueStmt, IfStmt, WhileStmt,
+               BreakStmt, ContinueStmt, ReturnStmt, TranslationUnit>;
 
 using AllNodes = utils::tuple_cat_t<Exprs, Decls, Stmts>;
 

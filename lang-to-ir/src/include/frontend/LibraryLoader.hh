@@ -2,21 +2,20 @@
 
 #include <vector>
 
-#include "frontend/Nodes.hh"
 #include "frontend/Driver.hh"
-#include "frontend/Types.hh"
+#include "frontend/Nodes.hh"
 #include "frontend/SymTables.hh"
+#include "frontend/Types.hh"
 
 namespace paracl {
 
 class LibraryLoader final {
-	Driver& driver_;
+  Driver &driver_;
 
 public:
-	LibraryLoader(Driver& driver):
-	driver_(driver) {}
+  LibraryLoader(Driver &driver) : driver_(driver) {}
 
-	void loadLibrary();
+  void loadLibrary();
 };
 
 } // namespace paracl

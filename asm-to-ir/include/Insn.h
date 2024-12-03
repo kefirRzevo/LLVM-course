@@ -2,6 +2,8 @@
 
 #include "CPU.h"
 
+#include "llvm/Support/raw_ostream.h"
+
 #define DEF_INSN(insn_name, exec_cpu, decode, exec_ir) insn_name,
 
 enum class InsnType {

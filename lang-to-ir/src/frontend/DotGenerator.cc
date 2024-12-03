@@ -282,9 +282,9 @@ public:
   }
 };
 
-void generateDot(std::string_view filepath, TranslationUnit* root) {
-	DotGenerator generator{filepath};
-	generator.generate(root);
+void generateDot(std::string_view filepath, TranslationUnit *root) {
+  DotGenerator generator{filepath};
+  generator.generate(root);
 }
 
 } // namespace paracl

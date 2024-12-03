@@ -85,86 +85,88 @@ define dso_local void @app() local_unnamed_addr #0 {
   br i1 %9, label %10, label %2, !llvm.loop !5
 
 10:                                               ; preds = %2
-  %11 = tail call zeroext i1 @gui_quit_event() #5
-  br i1 %11, label %66, label %12
+  %11 = tail call i32 @gui_quit_event() #5
+  %12 = icmp eq i32 %11, 0
+  br i1 %12, label %13, label %68
 
-12:                                               ; preds = %10, %50
-  %13 = phi i32 [ %17, %50 ], [ 0, %10 ]
-  %14 = and i32 %13, 511
-  %15 = zext nneg i32 %14 to i64
-  %16 = getelementptr inbounds [512 x [512 x i8]], ptr %1, i64 0, i64 %15
-  %17 = add nuw nsw i32 %13, 1
-  %18 = and i32 %17, 511
-  %19 = zext nneg i32 %18 to i64
-  %20 = getelementptr inbounds [512 x [512 x i8]], ptr %1, i64 0, i64 %19
-  br label %21
+13:                                               ; preds = %10, %51
+  %14 = phi i32 [ %18, %51 ], [ 0, %10 ]
+  %15 = and i32 %14, 511
+  %16 = zext nneg i32 %15 to i64
+  %17 = getelementptr inbounds [512 x [512 x i8]], ptr %1, i64 0, i64 %16
+  %18 = add nuw nsw i32 %14, 1
+  %19 = and i32 %18, 511
+  %20 = zext nneg i32 %19 to i64
+  %21 = getelementptr inbounds [512 x [512 x i8]], ptr %1, i64 0, i64 %20
+  br label %22
 
-21:                                               ; preds = %21, %12
-  %22 = phi i64 [ 0, %12 ], [ %34, %21 ]
-  %23 = add nuw nsw i64 %22, 511
-  %24 = and i64 %23, 511
-  %25 = getelementptr inbounds i8, ptr %16, i64 %24
-  %26 = load i8, ptr %25, align 1, !tbaa !7, !range !11, !noundef !12
-  %27 = icmp eq i8 %26, 0
-  %28 = select i1 %27, i32 0, i32 4
-  %29 = getelementptr inbounds i8, ptr %16, i64 %22
-  %30 = load i8, ptr %29, align 1, !tbaa !7, !range !11, !noundef !12
-  %31 = icmp eq i8 %30, 0
-  %32 = or disjoint i32 %28, 2
-  %33 = select i1 %31, i32 %28, i32 %32
-  %34 = add nuw nsw i64 %22, 1
-  %35 = and i64 %34, 511
-  %36 = getelementptr inbounds i8, ptr %16, i64 %35
-  %37 = load i8, ptr %36, align 1, !tbaa !7, !range !11, !noundef !12
-  %38 = zext nneg i8 %37 to i32
-  %39 = or disjoint i32 %33, %38
-  %40 = shl nuw nsw i32 1, %39
-  %41 = and i32 %40, 110
-  %42 = icmp ne i32 %41, 0
-  %43 = zext i1 %42 to i8
-  %44 = getelementptr inbounds i8, ptr %20, i64 %22
-  store i8 %43, ptr %44, align 1
-  %45 = icmp eq i64 %34, 512
-  br i1 %45, label %46, label %21, !llvm.loop !15
+22:                                               ; preds = %22, %13
+  %23 = phi i64 [ 0, %13 ], [ %35, %22 ]
+  %24 = add nuw nsw i64 %23, 511
+  %25 = and i64 %24, 511
+  %26 = getelementptr inbounds i8, ptr %17, i64 %25
+  %27 = load i8, ptr %26, align 1, !tbaa !7, !range !11, !noundef !12
+  %28 = icmp eq i8 %27, 0
+  %29 = select i1 %28, i32 0, i32 4
+  %30 = getelementptr inbounds i8, ptr %17, i64 %23
+  %31 = load i8, ptr %30, align 1, !tbaa !7, !range !11, !noundef !12
+  %32 = icmp eq i8 %31, 0
+  %33 = or disjoint i32 %29, 2
+  %34 = select i1 %32, i32 %29, i32 %33
+  %35 = add nuw nsw i64 %23, 1
+  %36 = and i64 %35, 511
+  %37 = getelementptr inbounds i8, ptr %17, i64 %36
+  %38 = load i8, ptr %37, align 1, !tbaa !7, !range !11, !noundef !12
+  %39 = zext nneg i8 %38 to i32
+  %40 = or disjoint i32 %34, %39
+  %41 = shl nuw nsw i32 1, %40
+  %42 = and i32 %41, 110
+  %43 = icmp ne i32 %42, 0
+  %44 = zext i1 %43 to i8
+  %45 = getelementptr inbounds i8, ptr %21, i64 %23
+  store i8 %44, ptr %45, align 1
+  %46 = icmp eq i64 %35, 512
+  br i1 %46, label %47, label %22, !llvm.loop !15
 
-46:                                               ; preds = %21, %52
-  %47 = phi i64 [ %53, %52 ], [ 0, %21 ]
-  %48 = trunc i64 %47 to i32
-  %49 = trunc i64 %47 to i32
-  br label %55
+47:                                               ; preds = %22, %54
+  %48 = phi i64 [ %55, %54 ], [ 0, %22 ]
+  %49 = trunc i64 %48 to i32
+  %50 = trunc i64 %48 to i32
+  br label %57
 
-50:                                               ; preds = %52
+51:                                               ; preds = %54
   tail call void @gui_flush() #5
-  %51 = tail call zeroext i1 @gui_quit_event() #5
-  br i1 %51, label %66, label %12
+  %52 = tail call i32 @gui_quit_event() #5
+  %53 = icmp eq i32 %52, 0
+  br i1 %53, label %13, label %68
 
-52:                                               ; preds = %63
-  %53 = add nuw nsw i64 %47, 1
-  %54 = icmp eq i64 %53, 512
-  br i1 %54, label %50, label %46, !llvm.loop !16
+54:                                               ; preds = %65
+  %55 = add nuw nsw i64 %48, 1
+  %56 = icmp eq i64 %55, 512
+  br i1 %56, label %51, label %47, !llvm.loop !16
 
-55:                                               ; preds = %46, %63
-  %56 = phi i64 [ 0, %46 ], [ %64, %63 ]
-  %57 = getelementptr inbounds [512 x [512 x i8]], ptr %1, i64 0, i64 %47, i64 %56
-  %58 = load i8, ptr %57, align 1, !tbaa !7, !range !11, !noundef !12
-  %59 = icmp eq i8 %58, 0
-  %60 = trunc i64 %56 to i32
-  br i1 %59, label %62, label %61
+57:                                               ; preds = %47, %65
+  %58 = phi i64 [ 0, %47 ], [ %66, %65 ]
+  %59 = getelementptr inbounds [512 x [512 x i8]], ptr %1, i64 0, i64 %48, i64 %58
+  %60 = load i8, ptr %59, align 1, !tbaa !7, !range !11, !noundef !12
+  %61 = icmp eq i8 %60, 0
+  %62 = trunc i64 %58 to i32
+  br i1 %61, label %64, label %63
 
-61:                                               ; preds = %55
-  tail call void @gui_set_pixel(i32 noundef %60, i32 noundef %48, i32 noundef 255) #5
-  br label %63
+63:                                               ; preds = %57
+  tail call void @gui_set_pixel(i32 noundef %62, i32 noundef %49, i32 noundef 255) #5
+  br label %65
 
-62:                                               ; preds = %55
-  tail call void @gui_set_pixel(i32 noundef %60, i32 noundef %49, i32 noundef -1) #5
-  br label %63
+64:                                               ; preds = %57
+  tail call void @gui_set_pixel(i32 noundef %62, i32 noundef %50, i32 noundef -1) #5
+  br label %65
 
-63:                                               ; preds = %61, %62
-  %64 = add nuw nsw i64 %56, 1
-  %65 = icmp eq i64 %64, 512
-  br i1 %65, label %52, label %55, !llvm.loop !17
+65:                                               ; preds = %63, %64
+  %66 = add nuw nsw i64 %58, 1
+  %67 = icmp eq i64 %66, 512
+  br i1 %67, label %54, label %57, !llvm.loop !17
 
-66:                                               ; preds = %50, %10
+68:                                               ; preds = %51, %10
   call void @llvm.lifetime.end.p0(i64 262144, ptr nonnull %1) #5
   ret void
 }
@@ -172,7 +174,7 @@ define dso_local void @app() local_unnamed_addr #0 {
 ; Function Attrs: mustprogress nocallback nofree nounwind willreturn memory(argmem: write)
 declare void @llvm.memset.p0.i64(ptr nocapture writeonly, i8, i64, i1 immarg) #4
 
-declare zeroext i1 @gui_quit_event() local_unnamed_addr #2
+declare i32 @gui_quit_event() local_unnamed_addr #2
 
 declare void @gui_set_pixel(i32 noundef, i32 noundef, i32 noundef) local_unnamed_addr #2
 

@@ -86,11 +86,11 @@ inline std::string toString(BinaryOpcode op) {
   case BinaryOpcode::BIN_OR:
     return "||";
   case BinaryOpcode::BIN_BIT_AND:
-    return "&"; 
+    return "&";
   case BinaryOpcode::BIN_BIT_OR:
-    return "|"; 
+    return "|";
   case BinaryOpcode::BIN_BIT_XOR:
-    return "^"; 
+    return "^";
   case BinaryOpcode::BIN_ASSIGN:
     return "=";
   case BinaryOpcode::BIN_COMMA:

@@ -51,3 +51,9 @@ To convert asm to LLVM-IR and start interpretation, run this:
 ```
 ./build/asm-to-ir/AsmToIR_Gen
 ```
+
+## LLVM LANG-TO-IR Generation
+To convert `paracl` lang to LLVM-IR and start interpretation, run this:
+```
+./build/lang-to-ir/LangToIR_Gen
+```
