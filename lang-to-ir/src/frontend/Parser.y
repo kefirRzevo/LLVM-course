@@ -67,10 +67,10 @@
 
 	ASSIGN      "="
 	AND_OP      "&&"
-	BIT_AND			"&"
+	BIT_AND     "&"
 	OR_OP       "||"
 	BIT_OR      "|"
-	BIT_XOR 		"^"
+	BIT_XOR     "^"
 	LE_OP       "<="
 	GE_OP       ">="
 	LEFT_OP     "<<"
@@ -119,7 +119,6 @@
 	conditional_expression
 	assignment_expression
 	expression
-	// constant_expression
 	initializer
 
 %type <std::vector<Expr *>>
@@ -309,9 +308,6 @@
 				@$, BinaryOpcode::BIN_COMMA, $1, $3
 			);
 		}
-
-	// constant_expression
-		// : conditional_expression { $$ = $1; }
 
 	declaration
 		: type IDENTIFIER ASSIGN initializer SEMICOL {

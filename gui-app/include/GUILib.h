@@ -2,13 +2,12 @@
 
 #define GUI_WIDTH 512
 #define GUI_HEIGHT 512
-
-// This function is used to initialize gui console.
   
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+// This function is used to initialize gui console.
 extern void gui_init();
 
 // This function is used to clear resources after an application is closed.
