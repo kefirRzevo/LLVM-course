@@ -1,0 +1,15 @@
+class VecReg<bits<4> enc, string name, string purp, int size> {
+  bits<4> HWEncoding = enc;
+  string Name = name;
+  string purpose = purp;
+  int Size = size;
+}
+
+foreach i = 1-4 in {
+  if !eq(i, 1) then {
+    def D#i : VecReg<i, "d"#i, "GPR", 64>;  
+  } else {
+    def D#i : VecReg<i, "d"#i, "VEC", 64>;
+  }
+  def Q#i : VecReg<i, "q"#i, "VEC", 128>;
+}
